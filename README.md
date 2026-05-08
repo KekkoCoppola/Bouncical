@@ -2,7 +2,7 @@
   <img src="logo.png" alt="GravitySinger Logo" width="300" />
 </p>
 
-<h1 align="center">GravitySinger</h1>
+<h1 align="center">Bouncical</h1>
 
 <p align="center">
   <strong>A mobile-first, 2D physics sandbox that turns gravity into music.</strong>
