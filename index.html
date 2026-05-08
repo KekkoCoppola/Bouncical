@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>GravitySinger — Physics Music Sandbox</title>
+  <meta name="description" content="Mobile-first 2D sandbox physics-music toy. Place shapes, spawn balls, let gravity compose music.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <img id="bg-logo" src="logo.png" alt="GravitySinger Logo">
+    <canvas id="game"></canvas>
+
+    <!-- Floating top controls -->
+    <div id="top-controls">
+      <div class="top-left">
+        <button class="float-btn" id="btn-undo" disabled title="Undo">
+          <svg viewBox="0 0 24 24"><path d="M7 11l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15h12a5 5 0 000-10h-3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="float-btn" id="btn-redo" disabled title="Redo">
+          <svg viewBox="0 0 24 24"><path d="M17 11l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15H9a5 5 0 010-10h3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="top-right">
+        <button class="float-btn" id="btn-rules" title="Custom Rules">
+          <svg viewBox="0 0 24 24"><path d="M12 3v2m0 14v2m-7-9H3m18 0h-2M6.3 6.3L4.9 4.9m12.8 12.8l1.4 1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div id="toolbar">
+      <div class="tool-row">
+        <button class="tool-btn active" data-tool="ball" id="btn-ball" title="Spawn Ball">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="currentColor"/></svg>
+          <span>Ball</span>
+        </button>
+        <button class="tool-btn" data-tool="drag" id="btn-drag" title="Drag / Move">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3 3h-2v4h4v-2l3 3-3 3v-2h-4v4h2l-3 3-3-3h2v-4H7v2l-3-3 3-3v2h4V5H9l3-3z" fill="currentColor"/></svg>
+          <span>Drag</span>
+        </button>
+        <button class="tool-btn" data-tool="line" id="btn-line" title="Draw Line">
+          <svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <span>Line</span>
+        </button>
+        <button class="tool-btn" data-tool="circle" id="btn-circle" title="Draw Circle">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <span>Circle</span>
+        </button>
+        <button class="tool-btn" data-tool="triangle" id="btn-triangle" title="Draw Triangle">
+          <svg viewBox="0 0 24 24"><polygon points="12,3 22,21 2,21" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          <span>Tri</span>
+        </button>
+        <button class="tool-btn" data-tool="rectangle" id="btn-rect" title="Draw Rectangle">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" fill="none" stroke="currentColor" stroke-width="2" rx="1"/></svg>
+          <span>Rect</span>
+        </button>
+        <button class="tool-btn" data-tool="eraser" id="btn-eraser" title="Eraser">
+          <svg viewBox="0 0 24 24"><line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="20" y1="4" x2="4" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <span>Erase</span>
+        </button>
+        <button class="tool-btn" data-tool="rubber" id="btn-rubber" title="Rubber (Partial Erase)">
+          <svg viewBox="0 0 24 24"><path d="M4 16l8-8 8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 20h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <span>Rubber</span>
+        </button>
+      </div>
+      <div class="ctrl-row">
+        <button class="ctrl-btn accent" id="btn-start" title="Start Simulation">
+          <svg viewBox="0 0 24 24" id="icon-play"><polygon points="6,3 20,12 6,21" fill="currentColor"/></svg>
+          <svg viewBox="0 0 24 24" id="icon-pause" style="display:none"><rect x="5" y="3" width="5" height="18" fill="currentColor"/><rect x="14" y="3" width="5" height="18" fill="currentColor"/></svg>
+          <span id="lbl-start">START</span>
+        </button>
+        <button class="ctrl-btn" id="btn-clear" title="Clear All">
+          <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7zM9 7V4h6v3M4 7h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Clear</span>
+        </button>
+        <button class="ctrl-btn" id="btn-scale" title="Change Scale">
+          <svg viewBox="0 0 24 24"><path d="M9 17V5l10-2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
+          <span id="lbl-scale">Penta</span>
+        </button>
+        <button class="ctrl-btn" id="btn-midi" title="Upload MIDI Song">
+          <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <span>MIDI</span>
+        </button>
+        <input type="file" id="midi-upload" accept=".mid,.midi" style="display:none">
+        <button class="ctrl-btn" id="btn-mute" title="Mute/Unmute">
+          <svg viewBox="0 0 24 24" id="icon-unmuted"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor"/><path d="M16 8.5a4 4 0 010 7M19 5a9 9 0 010 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" id="icon-muted" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor"/><line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scale popup -->
+    <div id="scale-popup" class="hidden">
+      <button class="scale-opt active" data-scale="pentatonic">C Pentatonic</button>
+      <button class="scale-opt" data-scale="major">C Major</button>
+      <button class="scale-opt" data-scale="blues">Blues</button>
+      <button class="scale-opt" data-scale="minor">C Minor</button>
+      <button class="scale-opt" data-scale="japanese">Japanese (In)</button>
+    </div>
+
+    <!-- Rules panel -->
+    <div id="rules-panel" class="hidden">
+      <div class="rules-header">
+        <h3>⚙ Custom Rules</h3>
+        <button id="rules-close" class="rules-close-btn">✕</button>
+      </div>
+      <div class="rules-input-row">
+        <input type="text" id="rule-input" placeholder='e.g. "when ball hits circle it changes color"'>
+        <button id="btn-add-rule">Add</button>
+      </div>
+      <div id="rule-error" class="rule-error hidden"></div>
+      <div class="rules-presets">
+        <button class="preset-btn" data-rule="when the ball touches a circle it changes color">🎨 Color on circle</button>
+        <button class="preset-btn" data-rule="when the ball falls off screen it respawns but larger">📏 Respawn larger</button>
+        <button class="preset-btn" data-rule="when the ball hits a line it speeds up">⚡ Speed on ramp</button>
+        <button class="preset-btn" data-rule="when the ball hits a triangle it explodes into 3 balls">💥 Explode on tri</button>
+      </div>
+      <div id="rules-list"></div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="hidden"></div>
+
+    <!-- Audio overlay -->
+    <div id="audio-overlay">
+      <div class="ao-content">
+        <div class="ao-icon">♪</div>
+        <div class="ao-text">Tap to enable audio</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/poly-decomp@0.3.0/build/decomp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/polybooljs@1.2.0/dist/polybool.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script src="https://unpkg.com/@tonejs/midi"></script>
+  <script src="rules.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
