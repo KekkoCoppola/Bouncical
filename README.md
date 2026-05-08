@@ -9,7 +9,16 @@
   <br />
   Draw shapes, spawn balls, write natural language rules, and let physics compose viral melodies.
 </p>
+---
+## 🚀 Try The App
 
+You can try the app directly in your browser:
+
+<p align="center">
+  <a href="https://kekkocoppola.github.io/Bouncical/">
+    <img src="https://img.shields.io/badge/OPEN_BOUNCICAL-LIVE_DEMO-2ea44f?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1a1a1a" alt="Live Demo" />
+  </a>
+</p>
 ---
 
 ## 🌟 Overview
