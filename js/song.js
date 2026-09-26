@@ -275,8 +275,9 @@ onSettings((section, key) => {
 
 // ─── HIT SOUND ───
 // Returns a label (note name / ♪) when something played, else null.
+// Mute only silences the master bus, so songs keep advancing while muted.
 export function hitSound({ y, H, impact, ball, shape }) {
-  if (!A.ready || A.muted) return null;
+  if (!A.ready) return null;
   const vel = clamp(0.25 + impact / 12, 0.25, 1);
 
   if (song.type === 'midi' && song.events.length) {

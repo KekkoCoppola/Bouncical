@@ -82,6 +82,14 @@ const CASES = [
   ['quando la pallina tocca il cerchio mostra "Bravo!"', { type: 'hit_shape', shape: 'ring' }, [['fx.text', { text: 'Bravo!' }]]],
   ['quando la pallina tocca il cerchio si ferma', { type: 'hit_shape', shape: 'ring' }, [['ball.stop']]],
   ['quando la pallina tocca il cerchio il cerchio smette di girare', { type: 'hit_shape', shape: 'ring' }, [['shape.spin', { mode: 'stop' }]]],
+  ['quando la palla tocca il cerchio si ingrandisce', { type: 'hit_shape', shape: 'ring' }, [['ball.grow']]],
+  ['quando la pallina colpisce il bordo cambia colore', { type: 'hit_wall', side: 'any' }, [['ball.color']]],
+  ['la pallina esplode quando tocca un triangolo', { type: 'hit_shape', shape: 'tri' }, [['ball.explode']]],
+  ['quando una pallina esce dal cerchio aggiungi due palline', 'escape', [['world.spawn', { count: 2, where: 'here' }]]],
+  ['ogni 5 rimbalzi la pallina diventa più veloce', { type: 'hit_shape' }, [['ball.faster']], { every: 5 }],
+  ['quando la pallina tocca il cerchio, il cerchio diventa più piccolo e la pallina più grande', { type: 'hit_shape', shape: 'ring' }, [['shape.shrink'], ['ball.grow']]],
+  ['ogni 3 secondi cambia la gravità', { type: 'timer', seconds: 3 }, [['world.gravity']]],
+  ['quando la pallina tocca il pavimento il soffitto scompare', { type: 'hit_wall', side: 'floor' }, [['world.bounds', { which: 'ceiling', state: 'off' }]]],
 ];
 
 for (const [sentence, trig, acts, cond] of CASES) {

@@ -6,7 +6,7 @@
 import { settings } from '../config.js';
 import { stage } from '../stage.js';
 import { rt, applyGravity, rebuildWalls, velocityOf } from '../physics.js';
-import { scene, removeBall } from '../scene.js';
+import { scene } from '../scene.js';
 import { setBallRadius, MIN_R } from '../balls.js';
 import { setShapeScale, restoreShape, serializeShape, outlineWorld, stopShapeMotion } from '../shapes.js';
 import { playNotes, randomScaleNote, scaleMidis } from '../audio.js';

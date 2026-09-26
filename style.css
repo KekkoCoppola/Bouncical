@@ -50,7 +50,7 @@ svg .fill { fill: currentColor; stroke: none; }
 /* ─── APP GRID ─── */
 .app {
   position: fixed;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto auto;
@@ -131,6 +131,10 @@ svg .fill { fill: currentColor; stroke: none; }
 .chip { height: 36px; padding: 0 12px; border-radius: 999px; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text); }
 .chip svg { width: 16px; height: 16px; }
 .chip .caret { color: var(--faint); font-size: 10px; }
+#btn-format svg { transition: transform .2s; }
+#btn-format[data-aspect="16:9"] svg { transform: rotate(90deg); }
+#btn-format[data-aspect="1:1"] rect { width: 14px; height: 14px; x: 5px; y: 5px; }
+#btn-format[data-aspect="fit"] rect { width: 18px; height: 14px; x: 3px; y: 5px; }
 
 .tbtn, .cbtn {
   flex: 1 1 0;
@@ -282,17 +286,20 @@ svg .fill { fill: currentColor; stroke: none; }
 }
 .panel-foot { margin-top: 14px; }
 
+/* Landscape: a drawer next to the controls rail, so the rail stays usable. */
 @media (orientation: landscape) {
   .panel {
+    --rail: calc(2 * var(--btn) + 24px + var(--sar));
     left: auto;
-    top: 0;
-    width: min(430px, calc(100vw - 110px));
+    top: calc(var(--sat) + 8px);
+    bottom: calc(var(--sab) + 8px);
+    right: var(--rail);
+    width: min(430px, calc(100vw - var(--rail) - 12px));
     max-height: none;
-    border-top: none;
-    border-left: 1px solid var(--line-2);
-    border-radius: 18px 0 0 18px;
+    border: 1px solid var(--line-2);
+    border-radius: 18px;
     box-shadow: -18px 0 50px rgba(0, 0, 0, 0.55);
-    padding-top: var(--sat);
+    padding-bottom: 0;
     animation: drawerIn .22s cubic-bezier(.2, .8, .2, 1);
   }
 }
@@ -360,7 +367,7 @@ svg .fill { fill: currentColor; stroke: none; }
   font-size: 12px;
   cursor: pointer;
 }
-.frow .fselect { max-width: 58vw; }
+.frow .fselect { max-width: min(58vw, 250px); }
 .fnum, .ftext {
   height: 34px;
   padding: 0 8px;
@@ -548,7 +555,7 @@ svg .fill { fill: currentColor; stroke: none; }
 
 .modal {
   position: fixed;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   z-index: 70;
   display: flex;
   align-items: center;
@@ -577,7 +584,7 @@ svg .fill { fill: currentColor; stroke: none; }
 
 .drop-overlay {
   position: fixed;
-  inset: 12px;
+  top: 12px; right: 12px; bottom: 12px; left: 12px;
   z-index: 80;
   display: flex;
   align-items: center;
@@ -595,7 +602,7 @@ svg .fill { fill: currentColor; stroke: none; }
 
 .splash {
   position: fixed;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   z-index: 100;
   display: flex;
   align-items: center;

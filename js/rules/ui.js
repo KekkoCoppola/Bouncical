@@ -3,7 +3,7 @@
    builder. Every field comes from the catalog, so new actions show up here
    automatically. */
 
-import { h, toast, confirmDialog } from '../ui/dom.js';
+import { h, confirmDialog } from '../ui/dom.js';
 import { select, numberInput, textInput, swatches } from '../ui/form.js';
 import { TRIGGERS, ACTIONS, ACTION_GROUPS, newTrigger, newAction, summarize, describeCond } from './catalog.js';
 import { parseRule } from './parser.js';
@@ -176,13 +176,24 @@ export function mountRulesUI(root, engine) {
     return h(`label.pfield${f.type === 'color' ? '.wide' : ''}`, null, h('span', { text: f.label }), ctl);
   }
 
+  // Re-render one card after the current event finishes: replacing a card
+  // that holds the focused input fires blur/change again, so batch it.
+  const pending = new Set();
   function rerender(id) {
-    const old = list.querySelector(`[data-rid="${id}"]`);
-    const rule = engine.rules.find(r => r.id === id);
-    if (!old || !rule) { render(); return; }
-    const el = card(rule);
-    el.dataset.rid = id;
-    old.replaceWith(el);
+    if (!pending.size) queueMicrotask(flush);
+    pending.add(id);
+  }
+  function flush() {
+    const ids = [...pending];
+    pending.clear();
+    for (const id of ids) {
+      const old = list.querySelector(`[data-rid="${id}"]`);
+      const rule = engine.rules.find(r => r.id === id);
+      if (!old || !rule) { render(); return; }
+      const el = card(rule);
+      el.dataset.rid = id;
+      old.replaceWith(el);
+    }
   }
 
   function render() {

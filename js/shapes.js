@@ -133,6 +133,7 @@ function toConvex(reg) {
   const pts = reg.map(p => [p[0], p[1]]);
   const d = window.decomp;
   d.removeDuplicatePoints(pts, 0.01);
+  d.removeCollinearPoints(pts, 0.001);
   if (pts.length < 3) return [];
   d.makeCCW(pts);
   if (isConvex(pts)) return [pts];

@@ -41,8 +41,11 @@ export function loadStoredRules(parse) {
     if (stored) { rules.replaceAll(JSON.parse(stored)); return; }
     // Migrate rules saved by the first version (text + fixed trigger/action).
     const legacy = JSON.parse(localStorage.getItem('gs_rules') || '[]');
-    const list = legacy.map(r => r && r.text && parse(r.text)).filter(p => p && p.rule && p.rule.actions.length).map(p => p.rule);
-    legacy.forEach((r, i) => { if (list[i] && r.enabled === false) list[i].enabled = false; });
+    const list = [];
+    for (const r of Array.isArray(legacy) ? legacy : []) {
+      const p = r && typeof r.text === 'string' ? parse(r.text) : null;
+      if (p && p.rule && p.rule.actions.length) list.push({ ...p.rule, enabled: r.enabled !== false });
+    }
     rules.replaceAll(list);
     localStorage.removeItem('gs_rules');
   } catch (_) {}
