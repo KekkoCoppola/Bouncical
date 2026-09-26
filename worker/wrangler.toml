@@ -1,0 +1,9 @@
+# Bouncical song service — Cloudflare Worker (free plan is enough).
+# Deploy with:  npx wrangler deploy   (from this folder)
+name = "bouncical-songs"
+main = "song-proxy.js"
+compatibility_date = "2026-09-01"
+
+# Optional: only let your own site use the service.
+# [vars]
+# ALLOWED_ORIGIN = "https://kekkocoppola.github.io"

@@ -39,6 +39,7 @@ It runs entirely in the browser. There is no build step and no server, and all l
 - **Songs**:
   - **MIDI** (`.mid`): every bounce plays the next chord. The melody track is picked automatically (drums are skipped), and you can switch track, play chords or the melody only, transpose, and loop.
   - **Audio** (`.mp3`, `.m4a`, `.wav`, `.ogg`, …): every bounce plays the next slice of the real track, so the song advances only while balls bounce. A background mode is also available.
+  - **Find a song**: paste a Spotify, YouTube, Apple Music or Deezer link, or type a song name. The app loads the official 30-second preview from Apple Music or Deezer, which plays on bounces like an audio file. Each result also has a shortcut to look up a MIDI version of the song.
   - With no song loaded, bounces play a scale based on height. There are 9 scales and 6 instruments.
 - **Video recording**: the ● button records the scene and its audio at 1080p or higher, then lets you save it or share it on mobile.
 - **Viral scenes**: Growing Ball, Ring Escape, Note Rain, String Art, Split Frenzy and Shrinking Arena. They are built from ordinary shapes and rules, so everything stays editable.
@@ -67,6 +68,25 @@ Open **Rules** and type what should happen, or tap **+ New rule** to build one w
   - **Sound**: play a note.
 
 Rules and settings are saved in your browser.
+
+## 🔎 Find a Song
+
+Open **Music** and paste a link, or type a title and artist:
+
+| You paste | What happens |
+|---|---|
+| Apple Music or Deezer song link | That exact song is loaded |
+| Spotify or YouTube link | The title is read from the link, then the song is searched on Apple Music and Deezer |
+| A name, like `blinding lights the weeknd` | The best matches from Apple Music and Deezer, with covers |
+
+- **▶** listens to the preview. **Use** loads it as the song. **🎹** opens a MIDI search in a new tab: download the `.mid` file and drop it on the page.
+- Spotify and YouTube never provide audio, so their links are only used to recognize the song.
+- Previews last 30 seconds and loop. For a full song, load your own file.
+- Previews are provided for promotion: you are responsible for the rights to videos you publish.
+
+Everything works on GitHub Pages without a server. The optional free
+[song service](worker/README.md) (a Cloudflare Worker, about 5 minutes to set up)
+makes Spotify links and recordable previews reliable on every browser.
 
 ## 🎮 Controls
 
@@ -110,12 +130,14 @@ js/scene.js                 registry + undo/redo
 js/tools.js                 pointer tools
 js/render.js, fx.js         drawing and special effects
 js/audio.js, song.js        instruments, scales, MIDI and audio songs
+js/songsearch.js            find a song: link parsing, Apple Music / Deezer search
 js/recorder.js              video recording
 js/templates.js             viral scenes
 js/rules/                   catalog, engine, EN/IT parser, actions, builder UI
 js/ui/                      panels, forms, controls
 vendor/                     pinned third-party libraries (see vendor/LICENSES.md)
-tests/                      parser unit tests
+worker/                     optional free song service (Cloudflare Worker)
+tests/                      unit tests (rule parser, song search, song service)
 ```
 
 ## 🧩 Tech Stack

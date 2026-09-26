@@ -10,7 +10,11 @@ import { game, onGame, rules, toggleRun, start, clearScene, setAspect, loadTempl
 import { history, cmd, isEmpty, addShape } from '../scene.js';
 import { setTool, TOOLS } from '../tools.js';
 import { A, setMuted, unlock, INSTRUMENTS, SCALES, NOTE_NAMES, midiToName } from '../audio.js';
-import { song, loadSongFile, removeSong, resetSong, setMidiTrack, songProgress, onSongChange, currentTrack, onRunState } from '../song.js';
+import {
+  song, loadSongFile, loadSongFromUrl, loadStream, removeSong, resetSong, setMidiTrack, songProgress, songDuration,
+  onSongChange, currentTrack, onRunState, syncStreamMute,
+} from '../song.js';
+import { findSongs, previewFetchUrl, midiSearchUrl, hasService } from '../songsearch.js';
 import { TEMPLATES } from '../templates.js';
 import { canRecord, startRecording, stopRecording, recordingSeconds, rec, fileNameFor } from '../recorder.js';
 import { createShape, serializeShape, restoreShape, rotateShape, setShapeScale, setShapeMaterial, stopShapeMotion, SHAPE_LABELS } from '../shapes.js';
@@ -42,6 +46,7 @@ function bindToolbar() {
   $('#btn-mute').addEventListener('click', () => {
     unlock();
     setMuted(!A.muted);
+    syncStreamMute();
     $('#btn-mute').setAttribute('aria-pressed', String(A.muted));
     $('#btn-mute').title = A.muted ? 'Unmute' : 'Mute';
   });
@@ -109,7 +114,7 @@ function initPanels() {
   registerPanel('rules', { onOpen: () => { rulesUI.render(); if (fine) rulesUI.focus(); } });
   registerPanel('world', { onOpen: el => buildWorld($('.panel-body', el)) });
   registerPanel('fx', { onOpen: el => buildFx($('.panel-body', el)) });
-  registerPanel('music', { onOpen: el => buildMusic($('.panel-body', el)), onClose: () => clearInterval(progressTimer) });
+  registerPanel('music', { onOpen: el => buildMusic($('.panel-body', el)), onClose: () => { clearInterval(progressTimer); stopListening(); } });
   registerPanel('scenes', { onOpen: el => buildScenes($('.panel-body', el)) });
   registerPanel('shape', { onClose: () => selectShape(null) });
   // The inspected shape vanished (erased, broken by a rule, new scene…).
@@ -197,15 +202,18 @@ function buildMusic(body) {
   const tick = () => {
     bar.firstChild.style.width = `${(songProgress() * 100).toFixed(1)}%`;
     if (song.type === 'midi') pos.textContent = `${Math.min(song.index, song.events.length)} / ${song.events.length} notes`;
-    else if (song.type === 'audio') pos.textContent = `${fmtTime(songProgress() * song.buffer.duration)} / ${fmtTime(song.buffer.duration)}`;
+    else if (song.type) {
+      const d = songDuration();
+      pos.textContent = d ? `${fmtTime(songProgress() * d)} / ${fmtTime(d)}` : 'Loading…';
+    }
   };
 
   let songCard;
   if (!song.type) {
     songCard = h('div.song-card.empty', null,
       h('p.song-empty', { text: 'No song loaded — bounces play the scale below.' }),
-      h('p.hint', { text: 'Load a MIDI file (each bounce plays the next chord) or an audio file like MP3/M4A/WAV (each bounce plays the next slice of the real track). You can also drop a file on the page.' }),
-      h('div.btn-row', null, button('Load song…', () => $('#song-input').click(), 'primary')));
+      h('p.hint', { text: 'Find a song above, or load your own file: MIDI (each bounce plays the next chord) or MP3/M4A/WAV (each bounce plays the next slice of the track). You can also drop a file on the page.' }),
+      h('div.btn-row', null, button('Load file…', () => $('#song-input').click())));
   } else {
     const extra = [];
     if (song.type === 'midi') {
@@ -226,19 +234,37 @@ function buildMusic(body) {
       extra.push(slider({ label: 'Slice per bounce', min: 0.1, max: 1.5, step: 0.05, value: m.chunk, format: v => `${fmt2(v)} s`, onInput: set('music', 'chunk') }));
     }
     extra.push(toggle({ label: 'Loop song', value: m.loop, onChange: set('music', 'loop') }));
+    const meta = song.meta;
+    const title = meta
+      ? h('div.song-title.with-cover', null,
+        meta.cover ? h('img.song-cover', { src: meta.cover, alt: '', width: 44, height: 44, referrerpolicy: 'no-referrer' }) : null,
+        h('div.song-names', null, h('b', { text: meta.title }), h('span', { text: meta.artist })),
+        h('span.badge', { text: '30 s' }))
+      : h('div.song-title', null, h('span.badge', { text: song.type === 'midi' ? 'MIDI' : 'AUDIO' }), h('b', { text: song.name }));
+    const notes = [];
+    if (meta) {
+      notes.push(h('p.song-attrib', null, 'Official preview from ',
+        h('a', { href: meta.link, target: '_blank', rel: 'noopener noreferrer', text: meta.source === 'apple' ? 'Apple Music ↗' : 'Deezer ↗' })));
+      if (song.type === 'stream') {
+        notes.push(h('p.hint.warn', {
+          text: hasService() ? 'Plays live only: it can’t be included in recordings.'
+            : 'Plays live only: this browser can’t add it to recordings. The free song service fixes this (see README).',
+        }));
+      }
+    }
     songCard = h('div.song-card', null,
-      h('div.song-title', null, h('span.badge', { text: song.type === 'midi' ? 'MIDI' : 'AUDIO' }), h('b', { text: song.name })),
-      bar, pos,
+      title, bar, pos, ...notes,
       h('div.btn-row', null,
         button('Restart', () => { resetSong(); onRunState(game.running); tick(); }, 'small'),
-        button('Replace…', () => $('#song-input').click(), 'small'),
-        button('Remove', () => { removeSong(); toast('Song removed — back to the scale'); }, 'small danger')),
+        button('Load file…', () => $('#song-input').click(), 'small'),
+        button('Remove', () => { cancelPendingUse(); removeSong(); toast('Song removed — back to the scale'); }, 'small danger')),
       ...extra);
     tick();
     progressTimer = setInterval(tick, 250);
   }
 
   body.replaceChildren(
+    section('Find a song', finderView()),
     section('Song', songCard),
     section('Sound',
       select({ label: 'Instrument', options: Object.entries(INSTRUMENTS).map(([v, d]) => ({ v, l: d.label })), value: m.instrument, onChange: set('music', 'instrument') }),
@@ -254,6 +280,151 @@ function buildMusic(body) {
       slider({ label: 'Reverb', min: 0, max: 1, step: 0.01, value: m.reverb, format: v => `${Math.round(v * 100)}%`, onInput: set('music', 'reverb') })),
     resetButton('music', () => buildMusic(body)),
   );
+}
+
+// ─── FIND A SONG ───
+const finder = { query: '', results: [], status: '', error: false, busy: false, listening: null };
+let finderUI = null;
+let pendingUse = null;         // AbortController of the preview being loaded
+const PREVIEW_TIMEOUT = 25000; // a stalled download falls back to live playback
+const listenEl = typeof Audio !== 'undefined' ? new Audio() : null;
+if (listenEl) listenEl.addEventListener('ended', () => { finder.listening = null; renderResults(); });
+
+function finderView() {
+  const input = h('input.ftext.find-input', {
+    type: 'search', value: finder.query, maxlength: 300, autocomplete: 'off', enterkeyhint: 'search',
+    'aria-label': 'Find a song', placeholder: 'Paste a Spotify, YouTube, Apple Music or Deezer link, or type a song',
+  });
+  const go = h('button.btn.primary', { type: 'button', text: 'Search', onclick: () => runSearch(input.value) });
+  input.addEventListener('input', () => { finder.query = input.value; });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); runSearch(input.value); } });
+  input.addEventListener('paste', () => setTimeout(() => { if (/https?:\/\/|spotify:/i.test(input.value)) runSearch(input.value); }, 0));
+  finderUI = { status: h('p.find-status'), list: h('div.results'), go };
+  renderResults();
+  return h('div.finder', null, h('div.find-row', null, input, go), finderUI.status, finderUI.list);
+}
+
+function renderResults() {
+  if (!finderUI) return;
+  const { status, list, go } = finderUI;
+  go.disabled = finder.busy;
+  go.textContent = finder.busy ? 'Searching…' : 'Search';
+  status.textContent = finder.status;
+  status.classList.toggle('error', finder.error);
+  status.hidden = !finder.status;
+  list.replaceChildren(...finder.results.map(resultRow));
+  if (!finder.results.length && !finder.status) {
+    list.append(h('p.hint', { text: 'Loads the official 30-second preview from Apple Music or Deezer; Spotify and YouTube links are used to recognize the song. Previews are meant for promotion: you are responsible for the rights to videos you publish.' }));
+  }
+}
+
+async function runSearch(text) {
+  const q = String(text || '').trim();
+  finder.query = q;
+  if (!q || finder.busy) return;
+  stopListening();
+  finder.busy = true;
+  finder.error = false;
+  finder.status = 'Searching…';
+  renderResults();
+  try {
+    const { label, results } = await findSongs(q);
+    finder.results = results;
+    finder.status = `${results.length} result${results.length === 1 ? '' : 's'} for “${label}”`;
+  } catch (e) {
+    finder.results = [];
+    finder.error = true;
+    finder.status = e.message || 'Search failed.';
+  }
+  finder.busy = false;
+  renderResults();
+}
+
+function resultRow(r) {
+  const playing = finder.listening === r.key;
+  return h('div.result', null,
+    r.cover ? h('img.result-cover', { src: r.cover, alt: '', width: 48, height: 48, loading: 'lazy', referrerpolicy: 'no-referrer' }) : h('span.result-cover'),
+    h('div.result-text', null,
+      h('b', { text: r.title }),
+      h('span', { text: [r.artist, r.album].filter(Boolean).join(' · ') }),
+      h(`span.src-badge.${r.source}`, { text: r.source === 'apple' ? 'Apple Music' : 'Deezer' })),
+    h('div.result-actions', null,
+      r.preview ? h('button.icon-mini.listen', {
+        type: 'button', text: playing ? '❚❚' : '▶', title: playing ? 'Stop' : 'Listen to the 30 s preview',
+        'aria-label': playing ? 'Stop preview' : `Listen to ${r.title}`, onclick: () => toggleListen(r),
+      }) : null,
+      r.preview ? h('button.btn.small.primary', { type: 'button', text: 'Use', 'aria-label': `Use ${r.title}`, onclick: () => useResult(r) })
+        : h('span.no-preview', { text: 'No preview' }),
+      h('a.icon-mini.midi', {
+        href: midiSearchUrl(r), target: '_blank', rel: 'noopener noreferrer', text: '🎹',
+        title: 'Find a MIDI version on BitMidi, then drop the file here', 'aria-label': `Find a MIDI version of ${r.title}`,
+      })));
+}
+
+function toggleListen(r) {
+  if (!listenEl) return;
+  if (finder.listening === r.key) { stopListening(); return; }
+  listenEl.src = r.preview;
+  const p = listenEl.play();
+  if (p && p.catch) p.catch(() => { finder.listening = null; renderResults(); });
+  finder.listening = r.key;
+  renderResults();
+}
+
+function stopListening() {
+  if (!listenEl || !finder.listening) return;
+  listenEl.pause();
+  finder.listening = null;
+  renderResults();
+}
+
+function useResult(r) {
+  stopListening();
+  cancelPendingUse();
+  const job = new AbortController();
+  pendingUse = job;
+  const timer = setTimeout(() => job.abort(), PREVIEW_TIMEOUT);
+  // Prime a fallback player inside the tap: iOS only lets media play later
+  // if playback was first started by a user gesture.
+  const el = new Audio();
+  el.preload = 'auto';
+  el.src = r.preview;
+  const primed = el.play();
+  if (primed && primed.catch) primed.catch(() => {});
+  el.pause();
+  const meta = { title: r.title, artist: r.artist, cover: r.cover, link: r.link, source: r.source };
+  toast(`Loading “${r.title}”…`);
+  (async () => {
+    try {
+      await loadSongFromUrl(previewFetchUrl(r.preview), meta, job.signal);
+      releaseAudio(el);
+      toast(`♪ ${r.title}: 30 s preview ready — it plays as the balls bounce`);
+    } catch (e) {
+      // Replaced by another song meanwhile: leave that one alone.
+      if (pendingUse !== job) { releaseAudio(el); return; }
+      if (el.error) { toast('This preview couldn’t be played.', 'error'); return; }
+      el.addEventListener('error', () => {
+        if (song.el === el) { removeSong(); toast('This preview couldn’t be played.', 'error'); }
+      }, { once: true });
+      loadStream(el, meta);
+      toast(`♪ ${r.title} loaded — it plays live, but this browser can’t add it to recordings`);
+    } finally {
+      clearTimeout(timer);
+      if (pendingUse === job) pendingUse = null;
+    }
+    onRunState(game.running);
+  })();
+}
+
+function cancelPendingUse() {
+  if (!pendingUse) return;
+  const job = pendingUse;
+  pendingUse = null;
+  job.abort();
+}
+
+function releaseAudio(el) {
+  try { el.removeAttribute('src'); el.load(); } catch (_) {}
 }
 
 // ─── SCENES ───
@@ -352,6 +523,7 @@ function bindSong() {
 const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
 
 async function loadSong(file) {
+  cancelPendingUse();
   toast(`Loading “${file.name}”…`);
   try {
     await unlock();

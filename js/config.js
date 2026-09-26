@@ -3,6 +3,12 @@
 
 import { debounce } from './util.js';
 
+// ─── SONG SERVICE ───
+// Optional free Cloudflare Worker (see worker/README.md). Leave empty to use
+// the no-server mode; set it to e.g. 'https://bouncical-songs.you.workers.dev'
+// to enable Spotify links and recordable previews for every visitor.
+export const SONG_SERVICE_URL = '';
+
 // ─── SCENE FORMATS (world units) ───
 export const ASPECTS = {
   '9:16': { w: 450, h: 800, label: '9:16', hint: 'TikTok · Reels · Shorts' },
