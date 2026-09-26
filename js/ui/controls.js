@@ -7,10 +7,10 @@ import { $, $$, h, toast, openModal, closeModal, confirmDialog, isModalOpen } fr
 import { slider, toggle, select, segmented, swatches, section, button } from './form.js';
 import { registerPanel, openPanel, closePanel, togglePanel, currentPanel } from './panels.js';
 import { game, onGame, rules, toggleRun, start, clearScene, setAspect, loadTemplate, select as selectShape, removeShape } from '../game.js';
-import { scene, history, cmd, isEmpty, addShape } from '../scene.js';
+import { history, cmd, isEmpty, addShape } from '../scene.js';
 import { setTool, TOOLS } from '../tools.js';
 import { A, setMuted, unlock, INSTRUMENTS, SCALES, NOTE_NAMES, midiToName } from '../audio.js';
-import { song, loadSongFile, removeSong, setMidiTrack, songProgress, onSongChange, currentTrack } from '../song.js';
+import { song, loadSongFile, removeSong, resetSong, setMidiTrack, songProgress, onSongChange, currentTrack, onRunState } from '../song.js';
 import { TEMPLATES } from '../templates.js';
 import { canRecord, startRecording, stopRecording, recordingSeconds, rec, fileNameFor } from '../recorder.js';
 import { createShape, serializeShape, restoreShape, rotateShape, setShapeScale, setShapeMaterial, stopShapeMotion, SHAPE_LABELS } from '../shapes.js';
@@ -64,7 +64,10 @@ function bindToolbar() {
 // ─── FORMAT MENU ───
 function bindFormatMenu() {
   const btn = $('#btn-format'), menu = $('#format-menu');
-  const label = () => { $('#lbl-format').textContent = ASPECTS[settings.aspect].label; };
+  const label = () => {
+    $('#lbl-format').textContent = ASPECTS[settings.aspect].label;
+    btn.dataset.aspect = settings.aspect;
+  };
   label();
   menu.replaceChildren(...Object.entries(ASPECTS).map(([id, a]) => h('button.menu-item', {
     type: 'button', role: 'menuitemradio', 'data-aspect': id,
@@ -227,7 +230,7 @@ function buildMusic(body) {
       h('div.song-title', null, h('span.badge', { text: song.type === 'midi' ? 'MIDI' : 'AUDIO' }), h('b', { text: song.name })),
       bar, pos,
       h('div.btn-row', null,
-        button('Restart', () => { song.index = 0; song.pos = 0; song.finished = false; tick(); }, 'small'),
+        button('Restart', () => { resetSong(); onRunState(game.running); tick(); }, 'small'),
         button('Replace…', () => $('#song-input').click(), 'small'),
         button('Remove', () => { removeSong(); toast('Song removed — back to the scale'); }, 'small danger')),
       ...extra);
@@ -270,6 +273,7 @@ export async function askLoadTemplate(t) {
   closePanel();
   $('#lbl-format').textContent = ASPECTS[settings.aspect].label;
   toast(t.id === 'empty' ? 'Empty scene ready' : `${t.name} loaded — press Play`);
+  $('#btn-format').dataset.aspect = settings.aspect;
 }
 
 // ─── SHAPE INSPECTOR ───
@@ -358,6 +362,7 @@ async function loadSong(file) {
     } else {
       toast(`♪ ${song.name} loaded — every bounce plays the next slice`);
     }
+    onRunState(game.running); // background mode starts right away if playing
     if (currentPanel() !== 'music') openPanel('music');
   } catch (e) {
     toast(e.message || 'Could not load this file', 'error');
@@ -421,8 +426,11 @@ async function finishRecording() {
 // ─── KEYBOARD ───
 function bindKeyboard() {
   document.addEventListener('keydown', e => {
-    const tag = (e.target && e.target.tagName) || '';
-    const typing = /INPUT|TEXTAREA|SELECT/.test(tag) || (e.target && e.target.isContentEditable);
+    const el = e.target || document.body;
+    const tag = el.tagName || '';
+    // Sliders and switches don't eat shortcuts; text fields and menus do.
+    const typing = tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable
+      || (tag === 'INPUT' && !['range', 'checkbox', 'radio', 'button'].includes(el.type));
     if (e.key === 'Escape') {
       if (isModalOpen()) closeModal();
       else if (!$('#format-menu').hidden) $('#format-menu').hideMenu();
@@ -435,7 +443,8 @@ function bindKeyboard() {
     if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) history.redo(); else history.undo(); return; }
     if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); history.redo(); return; }
     if (mod || e.altKey) return;
-    if (e.key === ' ' && (tag === 'BODY' || tag === 'CANVAS')) { e.preventDefault(); unlock(); toggleRun(); return; }
+    const bar = el.closest && el.closest('#tools, #controls, #topbar');
+    if (e.key === ' ' && (tag === 'BODY' || tag === 'CANVAS' || bar)) { e.preventDefault(); unlock(); toggleRun(); return; }
     const n = parseInt(e.key, 10);
     if (n >= 1 && n <= TOOLS.length) { setTool(TOOLS[n - 1]); return; }
     if ((e.key === 'Delete' || e.key === 'Backspace') && view.selected) {
