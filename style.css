@@ -496,6 +496,49 @@ svg .fill { fill: currentColor; stroke: none; }
 .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--cyan)); transition: width .2s linear; }
 .song-pos { display: block; font-size: 10.5px; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
 
+/* ─── FIND A SONG ─── */
+.find-row { display: flex; gap: 8px; }
+.find-input { flex: 1; min-width: 0; width: auto; height: 38px; font-size: 12.5px; }
+.find-input::-webkit-search-cancel-button { filter: invert(1); opacity: 0.5; }
+.find-status { font-size: 11.5px; line-height: 1.45; color: var(--muted); margin: 8px 0 2px; }
+.find-status.error { color: var(--hot); }
+.results { display: grid; gap: 6px; margin-top: 8px; }
+.result {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+.result-cover { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; background: rgba(255, 255, 255, 0.06); display: block; }
+.result-text { display: grid; gap: 2px; min-width: 0; }
+.result-text b, .result-text span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.result-text b { font-size: 12px; color: var(--text); }
+.result-text span { font-size: 10.5px; color: var(--muted); }
+.result-text .src-badge { justify-self: start; font-size: 8.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 5px; border-radius: 4px; }
+.src-badge.apple { background: rgba(255, 70, 110, 0.16); color: #ff7d9c; }
+.src-badge.deezer { background: rgba(160, 110, 255, 0.18); color: #c3a2ff; }
+.result-actions { display: flex; align-items: center; gap: 4px; }
+.result-actions .icon-mini { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; border: 1px solid var(--line); }
+.result-actions .listen { color: var(--accent); }
+.no-preview { font-size: 10px; color: var(--faint); padding: 0 4px; }
+@media (max-width: 380px) {
+  .result { grid-template-columns: 40px minmax(0, 1fr); }
+  .result-cover { width: 40px; height: 40px; }
+  .result-actions { grid-column: 1 / -1; justify-content: flex-end; }
+}
+.song-title.with-cover { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; }
+.song-cover { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
+.song-names { display: grid; gap: 2px; min-width: 0; }
+.song-names b, .song-names span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.song-names span { font-size: 11px; color: var(--muted); }
+.song-attrib { font-size: 10.5px; color: var(--faint); margin-top: 8px; }
+.song-attrib a { color: var(--muted); }
+.hint.warn { color: var(--warn); }
+
 /* ─── SCENES ─── */
 .scene-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 10px; }
 .scene-card {

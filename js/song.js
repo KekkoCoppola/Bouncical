@@ -1,8 +1,11 @@
 /* ========== Bouncical — song.js ========== */
 /* What a bounce sounds like:
    - MIDI song: every bounce plays the next chord (notes starting together).
-   - Audio song (MP3/M4A/WAV/OGG): every bounce lets the real track play for
-     a short chunk from where it stopped; frequent bounces = continuous song.
+   - Audio song (MP3/M4A/WAV/OGG or a found 30 s preview): every bounce lets
+     the real track play for a short chunk from where it stopped; frequent
+     bounces = continuous song.
+   - Stream: a preview the browser may play but not decode (no CORS). It is
+     driven through an <audio> element, so it can't be recorded.
    - No song: a note from the scale chosen by height, or the shape's note. */
 
 import { settings, onSettings } from './config.js';
@@ -13,8 +16,9 @@ const CHORD_WINDOW = 0.03;   // notes within 30 ms are one chord
 const FADE = 0.008;
 
 export const song = {
-  type: null,          // null | 'midi' | 'audio'
+  type: null,          // null | 'midi' | 'audio' | 'stream'
   name: '',
+  meta: null,          // found songs: { title, artist, cover, link, source }
   // MIDI
   tracks: [],          // [{ index, name, notes, drum, avg }]
   track: 'auto',       // 'auto' | 'all' | track index
@@ -27,6 +31,9 @@ export const song = {
   pos: 0,              // seconds into the track while paused
   playing: null,       // { src, gain, startCtx, startPos, stopAt }
   finished: false,
+  // Stream
+  el: null,            // HTMLAudioElement
+  pauseTimer: 0,
 };
 
 const listeners = new Set();
@@ -66,7 +73,9 @@ function loadMidi(buf, name) {
   }).filter(t => t.notes > 0);
   if (!tracks.length) throw new Error('No notes found in this MIDI file.');
   stopAudio();
+  dropStream();
   song.type = 'midi';
+  song.meta = null;
   song.name = name.replace(/\.[^.]+$/, '');
   song.midi = midi;
   song.tracks = tracks;
@@ -129,7 +138,7 @@ function buildEvents() {
   song.finished = false;
 }
 
-async function loadAudio(buf, name) {
+async function loadAudio(buf, name, meta = null, signal = null) {
   await unlock();
   const raw = rawContext();
   if (!raw) throw new Error('Audio is not available in this browser.');
@@ -142,9 +151,12 @@ async function loadAudio(buf, name) {
   } catch (e) {
     throw new Error('This audio file could not be decoded by your browser.');
   }
+  if (signal && signal.aborted) throw new DOMException('Loading was cancelled.', 'AbortError');
   stopAudio();
+  dropStream();
   song.type = 'audio';
-  song.name = name.replace(/\.[^.]+$/, '');
+  song.meta = meta;
+  song.name = meta ? name : name.replace(/\.[^.]+$/, '');
   song.buffer = buffer;
   song.pos = 0;
   song.finished = false;
@@ -154,10 +166,43 @@ async function loadAudio(buf, name) {
   notify();
 }
 
+// A found preview: download + decode it (plays on bounces and records).
+// Throws when the file can't be fetched (e.g. no CORS): use loadStream().
+// Aborting `signal` cancels it and leaves the current song as it is.
+export async function loadSongFromUrl(fetchUrl, meta, signal = null) {
+  await unlock();
+  const r = await fetch(fetchUrl, { mode: 'cors', credentials: 'omit', signal });
+  if (!r.ok) throw new Error(`Preview download failed (${r.status}).`);
+  await loadAudio(await r.arrayBuffer(), `${meta.title} — ${meta.artist}`, meta, signal);
+}
+
+// Fallback for previews the browser can play but not decode.
+export function loadStream(el, meta) {
+  stopAudio();
+  dropStream();
+  Object.assign(song, {
+    type: 'stream', name: `${meta.title} — ${meta.artist}`, meta, el,
+    tracks: [], track: 'auto', autoTrack: null, events: [], index: 0, midi: null, buffer: null, pos: 0, finished: false,
+  });
+  el.loop = settings.music.loop;
+  el.onended = () => { if (song.el === el && !el.loop) song.finished = true; };
+  notify();
+}
+
+function dropStream() {
+  const el = song.el;
+  if (!el) return;
+  clearTimeout(song.pauseTimer);
+  song.el = null;
+  el.onended = null;
+  try { el.pause(); el.removeAttribute('src'); el.load(); } catch (_) {}
+}
+
 export function removeSong() {
   stopAudio();
+  dropStream();
   Object.assign(song, {
-    type: null, name: '', tracks: [], track: 'auto', autoTrack: null, events: [], index: 0,
+    type: null, name: '', meta: null, tracks: [], track: 'auto', autoTrack: null, events: [], index: 0,
     midi: null, buffer: null, pos: 0, finished: false,
   });
   notify();
@@ -165,6 +210,11 @@ export function removeSong() {
 
 export function resetSong() {
   stopAudio();
+  if (song.el) {
+    clearTimeout(song.pauseTimer);
+    song.el.pause();
+    try { song.el.currentTime = 0; } catch (_) {}
+  }
   song.index = 0;
   song.pos = 0;
   song.finished = false;
@@ -174,7 +224,33 @@ export function resetSong() {
 export function songProgress() {
   if (song.type === 'midi') return song.events.length ? Math.min(1, song.index / song.events.length) : 0;
   if (song.type === 'audio' && song.buffer) return clamp(currentPos() / song.buffer.duration, 0, 1);
+  if (song.type === 'stream' && song.el && song.el.duration) return clamp(song.el.currentTime / song.el.duration, 0, 1);
   return 0;
+}
+
+export function songDuration() {
+  if (song.type === 'audio' && song.buffer) return song.buffer.duration;
+  if (song.type === 'stream' && song.el) return song.el.duration || 0;
+  return 0;
+}
+
+// ─── STREAM PLAYBACK ───
+function streamPlay(el) {
+  el.muted = A.muted;
+  el.volume = clamp(settings.music.volume, 0, 1);
+  if (el.paused) {
+    const p = el.play();
+    if (p && p.catch) p.catch(() => {});
+  }
+}
+
+function streamFor(seconds) {
+  const el = song.el;
+  if (!settings.music.loop && el.ended) { song.finished = true; return false; }
+  clearTimeout(song.pauseTimer);
+  streamPlay(el);
+  song.pauseTimer = setTimeout(() => { if (song.el === el) el.pause(); }, seconds * 1000);
+  return true;
 }
 
 // ─── AUDIO PLAYBACK ───
@@ -264,14 +340,29 @@ function playAudioFor(seconds) {
 
 // Background mode follows the simulation's play/pause.
 export function onRunState(running) {
-  if (song.type !== 'audio' || settings.music.audioMode !== 'background') return;
-  if (running) playAudioFor(Infinity);
-  else stopAudio();
+  if (settings.music.audioMode !== 'background') return;
+  if (song.type === 'audio') {
+    if (running) playAudioFor(Infinity);
+    else stopAudio();
+  } else if (song.type === 'stream' && song.el) {
+    clearTimeout(song.pauseTimer);
+    if (running) streamPlay(song.el);
+    else song.el.pause();
+  }
 }
 
 onSettings((section, key) => {
-  if (section === 'music' && (key === 'audioMode' || key === 'loop' || key === '*')) stopAudio();
+  if (section !== 'music') return;
+  if (key === 'audioMode' || key === 'loop' || key === '*') {
+    stopAudio();
+    if (song.el) { clearTimeout(song.pauseTimer); song.el.pause(); song.el.loop = settings.music.loop; }
+  }
+  if (song.el && (key === 'volume' || key === '*')) song.el.volume = clamp(settings.music.volume, 0, 1);
 });
+
+export function syncStreamMute() {
+  if (song.el) song.el.muted = A.muted;
+}
 
 // ─── HIT SOUND ───
 // Returns a label (note name / ♪) when something played, else null.
@@ -296,6 +387,11 @@ export function hitSound({ y, H, impact, ball, shape }) {
   if (song.type === 'audio' && song.buffer) {
     if (settings.music.audioMode === 'background') return null;
     return playAudioFor(settings.music.chunk) ? '♪' : null;
+  }
+
+  if (song.type === 'stream' && song.el) {
+    if (settings.music.audioMode === 'background') return null;
+    return streamFor(settings.music.chunk) ? '♪' : null;
   }
 
   const m = shape && shape.note != null ? shape.note : noteForHeight(y, H, ball ? ball.noteShift : 0);

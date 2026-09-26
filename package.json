@@ -1,6 +1,7 @@
 {
   "name": "bouncical",
   "private": true,
+  "type": "module",
   "description": "Physics music sandbox. Static site: no build step, no runtime dependencies.",
   "scripts": {
     "start": "npx --yes http-server -p 8080 -c-1 .",
