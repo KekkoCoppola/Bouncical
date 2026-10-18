@@ -45,7 +45,7 @@ Il layout editor (`.ss-editor`) si adatta fluidamente alla risoluzione dello sch
 - **Due colonne centrate (`.ss-editor`, regola N16)**:
   - Layout centrato sull'asse del titolo (`justify-content: center`): pannello e quadro formano un blocco compatto senza vuoti vuoti intermedi.
   - A sinistra: pannello impostazioni `.ss-panel` (`--panel-w: 340px`) a fisarmonica (`details.ss-section`).
-  - A destra: quadro sticky `.ss-stage` con `.ss-frame` (340px in 9:16 per bilanciare la larghezza del pannello), canvas Matter.js e barra playback `.ss-stage-bar` sotto il quadro.
+  - A destra: quadro sticky `.ss-stage` con `.ss-frame` a tutta altezza (`height: var(--stage-frame-h)`, che occupa il massimo possibile dell'altezza della viewport mantenendo l'aspect ratio 9:16/1:1/16:9), canvas Matter.js scalato in alta risoluzione e barra playback `.ss-stage-bar` subito sotto.
   - Bottoni secondari in inchiostro (`--ink-900` con testo `--on-ink`), riservando l'unico accento corallo all'azione di registrazione video.
 - **Footer (`.ss-footer`)**: Wordmark ScrollStudio e copyright 2026.
 

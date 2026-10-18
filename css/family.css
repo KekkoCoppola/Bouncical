@@ -1299,9 +1299,21 @@ h3 {
    stage column stops at the content's width and panel + stage stay one group, centred under
    the title. The page stays as wide as before: the light behind the stage is not cut */
 @media (min-width: 861px) {
+  .ss-head {
+    padding: var(--s-2) var(--gutter) var(--s-3);
+  }
+
   .ss-editor {
-    grid-template-columns: minmax(280px, var(--panel-w)) fit-content(var(--stage-w));
+    grid-template-columns: minmax(280px, var(--panel-w)) auto;
     justify-content: center;
+    gap: var(--s-5);
+    padding: 0 var(--gutter) var(--s-3);
+  }
+
+  .ss-stage {
+    position: sticky;
+    top: var(--s-2);
+    gap: var(--s-2);
   }
 }
 
