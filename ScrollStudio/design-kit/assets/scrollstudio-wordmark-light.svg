@@ -1,0 +1,72 @@
+<svg role="img" aria-label="ScrollStudio" xmlns="http://www.w3.org/2000/svg" viewBox="220 334 796 404" width="796" height="404">
+  <!-- Light drawing for the dark theme: same paths as scrollstudio-wordmark.svg,
+       letters in the dark --ink-700 (#C5C2BC), the ® as faint as on the light wall -->
+  <defs>
+    <!-- Maschera per i tagli orizzontali di Scroll e STUDIO -->
+    <mask id="cuts">
+      <rect width="1200" height="900" fill="white" />
+      <!-- Fascia centrale tagliata di Scroll -->
+      <rect x="395" y="420" width="440" height="60" fill="black" />
+      <!-- Fascia centrale tagliata di STUDIO -->
+      <rect x="475" y="648" width="198" height="35" fill="black" />
+      <rect x="825" y="652" width="150" height="30" fill="black" />
+    </mask>
+  </defs>
+
+  <g fill="#C5C2BC">
+    <!-- ==================== SCROLL ==================== -->
+    <!-- Lettera S grande -->
+    <path d="M 380 375 C 362 352 336 340 304 340 C 261 340 234 365 234 398 C 234 433 263 449 302 460 C 337 470 353 479 353 501 C 353 521 334 534 307 534 C 279 534 259 521 247 503 L 224 522 C 242 546 271 561 307 561 C 354 561 384 535 384 498 C 384 459 352 444 312 433 C 279 424 265 415 265 396 C 265 378 281 367 305 367 C 329 367 347 377 359 394 Z" />
+
+    <!-- Lettere c, r, o (divise in metà superiore e inferiore) -->
+    <g mask="url(#cuts)">
+      <!-- c superiore (come una u tagliata sopra) -->
+      <path d="M 408 343 L 438 343 L 438 352 C 438 378 456 394 480 394 C 498 394 512 386 520 373 L 542 390 C 529 410 507 422 480 422 C 438 422 408 393 408 352 Z" />
+      <!-- c inferiore -->
+      <path d="M 408 554 L 408 545 C 408 504 438 475 480 475 C 507 475 529 487 542 507 L 520 524 C 512 511 498 503 480 503 C 456 503 438 519 438 545 L 438 554 Z" />
+
+      <!-- r superiore -->
+      <rect x="574" y="343" width="30" height="75" />
+      <!-- r inferiore -->
+      <path d="M 574 480 L 604 480 L 604 503 C 613 486 630 477 650 477 L 655 477 L 655 506 L 647 506 C 621 506 604 521 604 547 L 604 554 L 574 554 Z" />
+
+      <!-- o superiore -->
+      <path d="M 671 343 L 701 343 L 701 350 C 701 378 721 394 746 394 C 771 394 791 378 791 350 L 791 343 L 821 343 L 821 350 C 821 393 789 422 746 422 C 703 422 671 393 671 350 Z" />
+      <!-- o inferiore -->
+      <path d="M 671 554 L 671 547 C 671 504 703 475 746 475 C 789 475 821 504 821 547 L 821 554 L 791 554 L 791 547 C 791 519 771 503 746 503 C 721 503 701 519 701 547 L 701 554 Z" />
+    </g>
+
+    <!-- l, l -->
+    <rect x="857" y="343" width="30" height="211" />
+    <rect x="932" y="343" width="30" height="211" />
+
+    <!-- ==================== STUDIO ==================== -->
+    <!-- S piccola -->
+    <path d="M 326 622 C 314 609 298 602 279 602 C 253 602 237 617 237 637 C 237 658 254 667 278 674 C 299 680 309 685 309 698 C 309 710 297 718 281 718 C 264 718 251 710 244 699 L 230 711 C 241 725 259 734 281 734 C 309 734 328 719 328 696 C 328 673 308 664 284 657 C 264 652 256 647 256 635 C 256 625 265 618 280 618 C 294 618 305 624 313 634 Z" />
+
+    <!-- T (con asta verticale staccata) -->
+    <rect x="357" y="604" width="100" height="21" />
+    <rect x="396" y="647" width="22" height="83" />
+
+    <!-- U, D, O con tagli orizzontali -->
+    <g mask="url(#cuts)">
+      <!-- U -->
+      <path d="M 488 604 L 510 604 L 510 680 C 510 701 523 713 542 713 C 561 713 573 701 573 680 L 573 604 L 595 604 L 595 681 C 595 714 574 734 542 734 C 510 734 488 714 488 681 Z" />
+
+      <!-- D -->
+      <path fill-rule="evenodd" d="M 636 604 L 683 604 C 722 604 746 629 746 667 C 746 705 722 730 683 730 L 636 730 Z M 658 625 L 658 709 L 682 709 C 708 709 723 693 723 667 C 723 641 708 625 682 625 Z" />
+
+      <!-- O -->
+      <path fill-rule="evenodd" d="M 901 602 C 939 602 966 630 966 668 C 966 706 939 734 901 734 C 863 734 836 706 836 668 C 836 630 863 602 901 602 Z M 901 623 C 876 623 858 642 858 668 C 858 694 876 713 901 713 C 926 713 944 694 944 668 C 944 642 926 623 901 623 Z" />
+    </g>
+
+    <!-- I -->
+    <rect x="781" y="604" width="22" height="126" />
+  </g>
+
+  <!-- Simbolo ® -->
+  <g transform="translate(995, 358)">
+    <circle cx="0" cy="0" r="14.5" fill="none" stroke="#474746" stroke-width="2.2" />
+    <path d="M -4.5 5.5 L -4.5 -5.5 L 0.5 -5.5 C 2.8 -5.5 4.2 -4.3 4.2 -2.3 C 4.2 -0.6 3.1 0.5 1.4 0.8 L 4.5 5.5 L 2.1 5.5 L -0.7 1.0 L -2.4 1.0 L -2.4 5.5 Z M -2.4 -0.7 L 0.3 -0.7 C 1.5 -0.7 2.1 -1.3 2.1 -2.3 C 2.1 -3.3 1.5 -3.8 0.3 -3.8 L -2.4 -3.8 Z" fill="#474746" fill-rule="evenodd" />
+  </g>
+</svg>

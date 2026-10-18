@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ScrollStudio — Specimen famiglia</title>
+  <meta name="theme-color" content="#E9E9E8">
+  <script src="theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400&display=swap">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="family.css">
+  <script src="i18n.js" defer></script>
+  <style>
+    /* Specimen-only layout, not part of the kit */
+    .spec { padding: 0 var(--gutter) var(--s-7); }
+    .spec__title { margin: var(--s-7) 0 var(--s-5); font-size: var(--fs-lg); }
+    .spec__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s-5); }
+    .spec__cell { display: grid; align-content: start; gap: var(--s-3); }
+    .spec__cell > h3 { font-size: var(--fs-md); }
+    .spec__line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
+    .spec__paper { padding: var(--s-5); background: var(--paper); border-radius: var(--radius); box-shadow: var(--shadow-panel); display: grid; gap: var(--s-3); }
+    .spec__modal { animation: none; }
+  </style>
+</head>
+<body>
+  <header class="ss-topbar">
+    <a class="ss-topbar__home" href="#" aria-label="ScrollStudio, torna all'hub">
+      <img class="ss-only-light" src="assets/scrollstudio-wordmark.svg" alt="ScrollStudio" width="796" height="404">
+      <img class="ss-only-dark" src="assets/scrollstudio-wordmark-light.svg" alt="ScrollStudio" width="796" height="404">
+    </a>
+    <span class="ss-topbar__sep" aria-hidden="true"></span>
+    <a class="ss-topbar__product" href="#">
+      <img src="assets/topfratmranks-logo.svg" alt="">
+      <span>TopFratmRanks</span>
+    </a>
+    <nav class="ss-topbar__nav" aria-label="Principale">
+      <a class="ss-link" href="#" aria-current="page">Editor</a>
+      <a class="ss-link" href="#primitivi">Guida</a>
+    </nav>
+    <div class="ss-lang" role="group" aria-label="Lingua">
+      <button class="ss-lang__option" type="button" aria-pressed="true" data-lang="it">
+        <svg class="ss-lang__flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#F4F5F0" d="M1 0h1v2H1z"/><path fill="#CE2B37" d="M2 0h1v2H2z"/></svg>
+        IT
+      </button>
+      <button class="ss-lang__option" type="button" aria-pressed="false" data-lang="en">
+        <svg class="ss-lang__flag" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="flag-uk-cross"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><path fill="#012169" d="M0 0h60v30H0z"/><path stroke="#FFF" stroke-width="6" d="m0 0 60 30m0-30L0 30"/><path stroke="#C8102E" stroke-width="4" clip-path="url(#flag-uk-cross)" d="m0 0 60 30m0-30L0 30"/><path stroke="#FFF" stroke-width="10" d="M30 0v30M0 15h60"/><path stroke="#C8102E" stroke-width="6" d="M30 0v30M0 15h60"/></svg>
+        EN
+      </button>
+    </div>
+    <div class="ss-theme" role="group" aria-label="Tema" data-en-aria-label="Theme">
+      <button class="ss-theme__option" type="button" aria-pressed="true" data-theme-choice="light" aria-label="Tema chiaro" data-en-aria-label="Light theme">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="2.2"/><path d="M6 1v1.2M6 9.8V11M1 6h1.2M9.8 6H11M2.5 2.5l.85.85M8.65 8.65l.85.85M2.5 9.5l.85-.85M8.65 3.35l.85-.85"/></svg>
+      </button>
+      <button class="ss-theme__option" type="button" aria-pressed="false" data-theme-choice="dark" aria-label="Tema scuro" data-en-aria-label="Dark theme">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M9.5 7.6A4 4 0 1 1 4.4 2.5a4.2 4.2 0 0 0 5.1 5.1Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="ss-head">
+    <h1 class="ss-head__title" data-en="Build your ranking">Crea la tua classifica</h1>
+    <p class="ss-head__lede" data-en="Pick how many spots, load your clips and build your top list in seconds.">Scegli quante posizioni, carica le clip e monta la tua top in pochi secondi.</p>
+  </div>
+
+  <main class="ss-editor">
+    <aside class="ss-panel" aria-label="Impostazioni">
+      <details class="ss-section" open>
+        <summary>Clip <span class="ss-section__count">3 / 5</span><svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></summary>
+        <div class="ss-section__body">
+          <ol class="ss-list">
+            <li class="ss-clip is-active">
+              <span class="ss-clip__rank">1</span>
+              <span class="ss-clip__thumb" style="background-image:url(assets/topfratmranks.jpg)"></span>
+              <span class="ss-clip__meta"><span class="ss-clip__name">Il cane che salta il fosso</span><span class="ss-clip__dur">0:04,2</span></span>
+              <svg class="ss-icon ss-clip__handle" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 3h0M7.5 3h0M4.5 6h0M7.5 6h0M4.5 9h0M7.5 9h0" stroke-width="1.6"/></svg>
+            </li>
+            <li class="ss-clip">
+              <span class="ss-clip__rank">2</span>
+              <span class="ss-clip__thumb"></span>
+              <span class="ss-clip__meta"><span class="ss-clip__name">Gatto contro cetriolo</span><span class="ss-clip__dur">0:03,0</span></span>
+              <svg class="ss-icon ss-clip__handle" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 3h0M7.5 3h0M4.5 6h0M7.5 6h0M4.5 9h0M7.5 9h0" stroke-width="1.6"/></svg>
+            </li>
+            <li class="ss-clip">
+              <span class="ss-clip__rank">3</span>
+              <span class="ss-clip__thumb"></span>
+              <span class="ss-clip__meta"><span class="ss-clip__name">Skate fail al parco</span><span class="ss-clip__dur">0:05,8</span></span>
+              <svg class="ss-icon ss-clip__handle" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 3h0M7.5 3h0M4.5 6h0M7.5 6h0M4.5 9h0M7.5 9h0" stroke-width="1.6"/></svg>
+            </li>
+          </ol>
+          <label class="ss-drop">
+            <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8V2M3.5 4.5 6 2l2.5 2.5M2 10h8"/></svg>
+            <span>Trascina qui le clip o <span class="ss-link">sfoglia</span></span>
+            <span class="ss-hint">MP4 o MOV verticali, max 60 s</span>
+            <input class="ss-visually-hidden" type="file" accept="video/*" multiple>
+          </label>
+        </div>
+      </details>
+
+      <details class="ss-section" open>
+        <summary>Titolo<svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></summary>
+        <div class="ss-section__body">
+          <label class="ss-field">
+            <span class="ss-label">Testo</span>
+            <input class="ss-input" type="text" value="Top 5 fail della settimana">
+          </label>
+          <div class="ss-row">
+            <span class="ss-row__label">Colore parole</span>
+            <span class="spec__line">
+              <input class="ss-swatch" type="color" value="#FBFBFA" aria-label="Colore 1">
+              <input class="ss-swatch" type="color" value="#FFD23F" aria-label="Colore 2">
+              <input class="ss-swatch" type="color" value="#FD767E" aria-label="Colore 3">
+            </span>
+          </div>
+          <div class="ss-row">
+            <span class="ss-row__label">Stile</span>
+            <span class="ss-segmented" role="group" aria-label="Stile titolo">
+              <button class="ss-segmented__option" type="button" aria-pressed="true">Pieno</button>
+              <button class="ss-segmented__option" type="button" aria-pressed="false">Contorno</button>
+            </span>
+          </div>
+        </div>
+      </details>
+
+      <details class="ss-section">
+        <summary>Stile<svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></summary>
+        <div class="ss-section__body">
+          <label class="ss-field">
+            <span class="ss-label">Spessore contorno</span>
+            <input class="ss-range" type="range" min="0" max="12" value="4" data-range>
+          </label>
+          <div class="ss-row">
+            <span class="ss-row__label">Posizioni</span>
+            <input class="ss-input ss-input--num" type="number" min="1" max="10" value="5" aria-label="Posizioni">
+          </div>
+          <div class="ss-row">
+            <span class="ss-row__label">Mostra il numero</span>
+            <input class="ss-switch" type="checkbox" checked aria-label="Mostra il numero">
+          </div>
+          <label class="ss-field">
+            <span class="ss-label">Font</span>
+            <select class="ss-select"><option>Urbanist</option><option>Impact</option></select>
+          </label>
+        </div>
+      </details>
+
+      <details class="ss-section" open>
+        <summary>Esporta<svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></summary>
+        <div class="ss-section__body">
+          <div class="ss-progress" style="--p:64%">
+            <div class="ss-progress__head"><span class="ss-progress__value">64%</span><span class="ss-time">0:09 / 0:15</span></div>
+            <div class="ss-progress__track"><div class="ss-progress__fill"></div></div>
+          </div>
+          <p class="ss-note">Tieni aperta la scheda finché l'export non finisce.</p>
+          <button class="ss-btn ss-btn--primary ss-btn--block" type="button">
+            <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v6M3.5 5.5 6 8l2.5-2.5M2 10h8"/></svg>
+            Esporta MP4
+          </button>
+          <div class="spec__line">
+            <button class="ss-btn ss-btn--sm" type="button">Pubblica su YouTube <span class="ss-badge">Presto</span></button>
+          </div>
+        </div>
+      </details>
+    </aside>
+
+    <section class="ss-stage" aria-label="Anteprima">
+      <div class="ss-frame">
+        <img src="assets/topfratmranks.jpg" alt="">
+      </div>
+
+      <div class="ss-timeline">
+        <div class="ss-timeline__bar">
+          <button class="ss-icon-btn" type="button" aria-label="Riproduci">
+            <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z"/></svg>
+          </button>
+          <span class="ss-time"><b>0:06,1</b> / 0:15,4</span>
+          <span class="ss-segmented" role="group" aria-label="Velocità">
+            <button class="ss-segmented__option" type="button" aria-pressed="false">0,5×</button>
+            <button class="ss-segmented__option" type="button" aria-pressed="true">1×</button>
+          </span>
+        </div>
+        <div class="ss-timeline__lanes" style="--t:40%">
+          <div class="ss-segments">
+            <button class="ss-segment" type="button" style="--len:4.2"><span class="ss-segment__thumb"></span><span class="ss-segment__label">#3 Skate fail</span></button>
+            <button class="ss-segment" type="button" style="--len:3" aria-current="true"><span class="ss-segment__thumb"></span><span class="ss-segment__label">#2 Gatto</span></button>
+            <button class="ss-segment" type="button" style="--len:5.8"><span class="ss-segment__thumb" style="background-image:url(assets/topfratmranks.jpg)"></span><span class="ss-segment__label">#1 Il cane che salta</span></button>
+          </div>
+          <div class="ss-scrub" role="slider" aria-label="Posizione" aria-valuemin="0" aria-valuemax="15.4" aria-valuenow="6.1" tabindex="0"><span class="ss-scrub__fill"></span></div>
+          <span class="ss-playhead" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="spec" id="primitivi" aria-label="Primitivi">
+    <h2 class="spec__title">Primitivi</h2>
+    <div class="spec__grid">
+      <div class="spec__cell">
+        <h3>Bottoni</h3>
+        <div class="spec__line">
+          <button class="ss-btn ss-btn--primary" type="button">Esporta</button>
+          <button class="ss-btn" type="button">Mescola</button>
+          <button class="ss-btn ss-btn--sm" type="button">
+            <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v8M2 6h8"/></svg>
+            Aggiungi posizione
+          </button>
+          <button class="ss-btn" type="button" disabled>Disattivo</button>
+        </div>
+        <div class="spec__line">
+          <button class="ss-icon-btn ss-icon-btn--coral" type="button" aria-label="Apri"><svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 9 3M4.5 3H9v4.5"/></svg></button>
+          <button class="ss-icon-btn" type="button" aria-label="Riproduci"><svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z"/></svg></button>
+          <button class="ss-icon-btn ss-icon-btn--bare" type="button" aria-label="Chiudi"><svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 3 6 6M9 3 3 9"/></svg></button>
+          <button class="ss-link" type="button">Elimina clip</button>
+        </div>
+      </div>
+
+      <div class="spec__cell">
+        <h3>Campi</h3>
+        <div class="spec__paper">
+          <label class="ss-field"><span class="ss-label">Nome</span><input class="ss-input" type="text" placeholder="Es. Top 5 fail"></label>
+          <label class="ss-field"><span class="ss-label">Descrizione</span><textarea class="ss-textarea" placeholder="Scrivi qualcosa"></textarea></label>
+        </div>
+      </div>
+
+      <div class="spec__cell">
+        <h3>Stati e messaggi</h3>
+        <div class="spec__paper">
+          <div class="spec__line"><span class="ss-badge">Presto</span><span class="ss-badge">MP4</span><span class="ss-badge">1080×1920</span></div>
+          <p class="ss-note ss-note--error">La clip 2 supera i 60 secondi.</p>
+          <p class="ss-note">Le clip vengono elaborate nel browser.</p>
+          <ol class="ss-steps"><li>Collega</li><li aria-current="step">Autorizza</li><li>Pubblica</li></ol>
+        </div>
+      </div>
+
+      <div class="spec__cell">
+        <h3>Modale</h3>
+        <div class="ss-modal spec__modal" role="dialog" aria-labelledby="spec-modal-title">
+          <button class="ss-icon-btn ss-icon-btn--bare ss-modal__close" type="button" aria-label="Chiudi"><svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 3 6 6M9 3 3 9"/></svg></button>
+          <h2 class="ss-modal__title" id="spec-modal-title">Eliminare la clip?</h2>
+          <div class="ss-modal__body"><p>"Gatto contro cetriolo" verrà tolta dalla classifica.</p></div>
+          <div class="ss-modal__actions">
+            <button class="ss-btn" type="button">Annulla</button>
+            <button class="ss-btn ss-btn--primary" type="button">Elimina</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="ss-footer">
+    <img class="ss-only-light" src="assets/scrollstudio-wordmark.svg" alt="ScrollStudio" width="796" height="404">
+    <img class="ss-only-dark" src="assets/scrollstudio-wordmark-light.svg" alt="ScrollStudio" width="796" height="404">
+    <span>© 2026</span>
+  </footer>
+
+  <script>
+    // Specimen-only: fill the range track and toggle segmented options
+    document.querySelectorAll('[data-range]').forEach((input) => {
+      const fill = () => input.style.setProperty('--p', `${((input.value - input.min) / (input.max - input.min)) * 100}%`);
+      input.addEventListener('input', fill);
+      fill();
+    });
+    document.querySelectorAll('.ss-segmented').forEach((group) => {
+      group.addEventListener('click', (e) => {
+        const option = e.target.closest('.ss-segmented__option');
+        if (!option) return;
+        group.querySelectorAll('.ss-segmented__option').forEach((o) => o.setAttribute('aria-pressed', String(o === option)));
+      });
+    });
+  </script>
+</body>
+</html>
