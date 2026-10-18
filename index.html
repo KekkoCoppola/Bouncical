@@ -1,153 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
-  <meta name="theme-color" content="#05050b">
-  <meta name="color-scheme" content="dark">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <title>Bouncical — Physics Music Sandbox</title>
-  <meta name="description" content="Draw shapes, drop balls, write rules in plain English or Italian and let gravity compose music. Record viral physics-music videos.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2305050b'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Ccircle cx='32' cy='36' r='9' fill='%23ff3d9a'/%3E%3C/svg%3E">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#E9E9E8">
+  <title data-en="Bouncical — Physics Music Sandbox">Bouncical — Musica dalla fisica</title>
+  <meta name="description" content="Disegna forme, lancia palline, scrivi regole in italiano o inglese e lascia che la gravità componga musica. Registra video musicali virali." data-en-content="Draw shapes, drop balls, write rules in plain English or Italian and let gravity compose music. Record viral physics-music videos.">
+  <link rel="icon" href="assets/bouncical-logo.svg" type="image/svg+xml">
+  <script src="js/theme.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/family.css">
   <link rel="stylesheet" href="style.css">
+  <script src="js/i18n.js" defer></script>
 </head>
 <body>
-  <div id="app" class="app">
-
-    <!-- Top bar -->
-    <header id="topbar" class="bar">
-      <div class="grp">
-        <button class="icon-btn" id="btn-undo" type="button" disabled title="Undo (Ctrl+Z)" aria-label="Undo">
-          <svg viewBox="0 0 24 24"><path d="M8 10l-4 4 4 4" /><path d="M4 14h11a5 5 0 000-10h-3" /></svg>
-        </button>
-        <button class="icon-btn" id="btn-redo" type="button" disabled title="Redo (Ctrl+Shift+Z)" aria-label="Redo">
-          <svg viewBox="0 0 24 24"><path d="M16 10l4 4-4 4" /><path d="M20 14H9a5 5 0 010-10h3" /></svg>
-        </button>
-      </div>
-      <button class="chip" id="btn-format" type="button" aria-haspopup="menu" aria-expanded="false" title="Scene format">
-        <svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2" /></svg>
-        <span id="lbl-format">9:16</span><span class="caret" aria-hidden="true">▾</span>
+  <!-- Topbar: ScrollStudio wordmark (torna all'hub) / Bouncical, controlli rapidi, switch lingua e tema -->
+  <header class="ss-topbar">
+    <a class="ss-topbar__home" href="https://kekkocoppola.github.io/ScrollStudio/" aria-label="ScrollStudio, torna all'hub" data-en-aria-label="ScrollStudio, back to the hub">
+      <img class="ss-only-light" src="assets/scrollstudio-wordmark.svg" alt="ScrollStudio" width="796" height="404">
+      <img class="ss-only-dark" src="assets/scrollstudio-wordmark-light.svg" alt="ScrollStudio" width="796" height="404">
+    </a>
+    <span class="ss-topbar__sep" aria-hidden="true"></span>
+    <a class="ss-topbar__product" href="index.html" aria-current="page">
+      <img src="assets/bouncical-logo.svg" alt="">
+      <span>Bouncical</span>
+    </a>
+    <nav class="ss-topbar__nav" aria-label="Controlli rapidi" data-en-aria-label="Quick controls">
+      <button class="ss-icon-btn ss-icon-btn--bare" id="btn-undo" type="button" disabled title="Annulla (Ctrl+Z)" data-en-title="Undo (Ctrl+Z)" aria-label="Annulla" data-en-aria-label="Undo">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 4.5 2 7l2.5 2.5"/><path d="M2 7h5a3 3 0 0 0 0-6H5"/></svg>
       </button>
-      <div class="grp">
-        <button class="icon-btn" id="btn-scenes" type="button" data-panel="scenes" aria-expanded="false" title="Viral scenes" aria-label="Viral scenes">
-          <svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4z" /><path d="M18.5 15l.8 2 2 .8-2 .7-.8 2-.8-2-2-.7 2-.8z" /></svg>
-        </button>
-        <button class="icon-btn rec" id="btn-rec" type="button" title="Record video" aria-label="Record video" aria-pressed="false">
-          <span class="rec-dot" aria-hidden="true"></span><span id="rec-time" class="rec-time"></span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Tools -->
-    <nav id="tools" class="toolbar tools" aria-label="Tools">
-      <button class="tbtn" type="button" data-tool="ball" aria-pressed="true" title="Ball — tap to drop, drag to launch (1)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5" class="fill" /></svg><span>Ball</span>
+      <button class="ss-icon-btn ss-icon-btn--bare" id="btn-redo" type="button" disabled title="Ripeti (Ctrl+Shift+Z)" data-en-title="Redo (Ctrl+Shift+Z)" aria-label="Ripeti" data-en-aria-label="Redo">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 4.5 10 7l-2.5 2.5"/><path d="M10 7H5a3 3 0 0 1 0-6h2"/></svg>
       </button>
-      <button class="tbtn" type="button" data-tool="move" aria-pressed="false" title="Move — drag things, tap a shape to edit it (2)">
-        <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3" /></svg><span>Move</span>
-      </button>
-      <button class="tbtn" type="button" data-tool="line" aria-pressed="false" title="Line — Shift snaps the angle (3)">
-        <svg viewBox="0 0 24 24"><path d="M5 19L19 5" /></svg><span>Line</span>
-      </button>
-      <button class="tbtn" type="button" data-tool="ring" aria-pressed="false" title="Circle (4)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" /></svg><span>Circle</span>
-      </button>
-      <button class="tbtn" type="button" data-tool="tri" aria-pressed="false" title="Triangle (5)">
-        <svg viewBox="0 0 24 24"><path d="M12 4l8.5 15h-17z" /></svg><span>Tri</span>
-      </button>
-      <button class="tbtn" type="button" data-tool="rect" aria-pressed="false" title="Rectangle (6)">
-        <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1.5" /></svg><span>Rect</span>
-      </button>
-      <button class="tbtn" type="button" data-tool="erase" aria-pressed="false" title="Erase — remove whole objects (7)">
-        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></svg><span>Erase</span>
-      </button>
-      <button class="tbtn" type="button" data-tool="rubber" aria-pressed="false" title="Rubber — carve pieces out of shapes (8)">
-        <svg viewBox="0 0 24 24"><path d="M14.5 4.5l5 5-8.5 8.5H6l-2.5-2.5z" /><path d="M9 10l5 5M11 18h9" /></svg><span>Rubber</span>
+      <button class="ss-icon-btn ss-icon-btn--bare" id="btn-mute" type="button" aria-pressed="false" title="Audio" data-en-title="Sound" aria-label="Audio" data-en-aria-label="Sound">
+        <svg class="ss-icon i-sound" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5a2 2 0 0 1 0 3M10 3a4 4 0 0 1 0 6"/></svg>
+        <svg class="ss-icon i-muted" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5l2.5 2.5M11 4.5l-2.5 2.5"/></svg>
       </button>
     </nav>
+    <div class="ss-lang" role="group" aria-label="Lingua" data-en-aria-label="Language">
+      <button class="ss-lang__option" type="button" aria-pressed="true" data-lang="it">
+        <svg class="ss-lang__flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#F4F5F0" d="M1 0h1v2H1z"/><path fill="#CE2B37" d="M2 0h1v2H2z"/></svg>
+        IT
+      </button>
+      <button class="ss-lang__option" type="button" aria-pressed="false" data-lang="en">
+        <svg class="ss-lang__flag" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="flag-uk-cross"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><path fill="#012169" d="M0 0h60v30H0z"/><path stroke="#FFF" stroke-width="6" d="m0 0 60 30m0-30L0 30"/><path stroke="#C8102E" stroke-width="4" clip-path="url(#flag-uk-cross)" d="m0 0 60 30m0-30L0 30"/><path stroke="#FFF" stroke-width="10" d="M30 0v30M0 15h60"/><path stroke="#C8102E" stroke-width="6" d="M30 0v30M0 15h60"/></svg>
+        EN
+      </button>
+    </div>
+    <div class="ss-theme" role="group" aria-label="Tema" data-en-aria-label="Theme">
+      <button class="ss-theme__option" type="button" aria-pressed="true" data-theme-choice="light" aria-label="Tema chiaro" data-en-aria-label="Light theme">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="2.2"/><path d="M6 1v1.2M6 9.8V11M1 6h1.2M9.8 6H11M2.5 2.5l.85.85M8.65 8.65l.85.85M2.5 9.5l.85-.85M8.65 3.35l.85-.85"/></svg>
+      </button>
+      <button class="ss-theme__option" type="button" aria-pressed="false" data-theme-choice="dark" aria-label="Tema scuro" data-en-aria-label="Dark theme">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M9.5 7.6A4 4 0 1 1 4.4 2.5a4.2 4.2 0 0 0 5.1 5.1Z"/></svg>
+      </button>
+    </div>
+  </header>
 
-    <!-- Stage -->
-    <main id="stage-wrap">
-      <canvas id="stage" aria-label="Physics scene"></canvas>
-      <div id="stage-hint" class="stage-hint" hidden>Tap to drop a ball · draw shapes · press ▶</div>
-    </main>
+  <!-- Titolo della pagina (stesse parole dell'hub) -->
+  <div class="ss-head">
+    <h1 class="ss-head__title" data-en="Physics music sandbox">Musica dalla fisica</h1>
+    <p class="ss-head__lede" data-en="Make those viral videos of balls bouncing to the beat, ready for TikTok and Instagram.">Crea i video virali delle palline che rimbalzano a tempo di musica, pronti per TikTok e Instagram.</p>
+  </div>
 
-    <!-- Controls -->
-    <nav id="controls" class="toolbar controls" aria-label="Controls">
-      <button class="cbtn play" id="btn-play" type="button" aria-pressed="false" title="Play (Space)">
-        <svg viewBox="0 0 24 24" class="i-play"><path d="M7 4.5l12 7.5-12 7.5z" class="fill" /></svg>
-        <svg viewBox="0 0 24 24" class="i-pause"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" class="fill" /></svg>
-        <span id="lbl-play">Play</span>
-      </button>
-      <button class="cbtn" id="btn-clear" type="button" title="Clear the scene (undoable)">
-        <svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 13H6.2zM9 7V4h6v3M3.5 7h17" /></svg><span>Clear</span>
-      </button>
-      <button class="cbtn" type="button" data-panel="music" aria-expanded="false" title="Music — scale, instrument, MIDI / MP3 song">
-        <svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" /></svg><span>Music</span>
-      </button>
-      <button class="cbtn" type="button" data-panel="rules" aria-expanded="false" title="Rules — make the scene react">
-        <svg viewBox="0 0 24 24"><path d="M4 6h9M4 12h5M4 18h9" /><path d="M16 4l4 4-4 4M13 16l2 2 4-4" /></svg><span>Rules</span>
-      </button>
-      <button class="cbtn" type="button" data-panel="world" aria-expanded="false" title="World — gravity, bounce, borders">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><path d="M12 7v8M9 12l3 3 3-3" /></svg><span>World</span>
-      </button>
-      <button class="cbtn" type="button" data-panel="fx" aria-expanded="false" title="Effects — particles, trails, glow">
-        <svg viewBox="0 0 24 24"><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4M5.3 5.3l2.8 2.8M15.9 15.9l2.8 2.8M5.3 18.7l2.8-2.8M15.9 8.1l2.8-2.8" /><circle cx="12" cy="12" r="2.2" class="fill" /></svg><span>FX</span>
-      </button>
-      <button class="cbtn" id="btn-mute" type="button" aria-pressed="false" title="Mute">
-        <svg viewBox="0 0 24 24" class="i-sound"><path d="M4 9.5v5h3.5L12 19V5L7.5 9.5z" class="fill" /><path d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11" /></svg>
-        <svg viewBox="0 0 24 24" class="i-muted"><path d="M4 9.5v5h3.5L12 19V5L7.5 9.5z" class="fill" /><path d="M16 9.5l5 5M21 9.5l-5 5" /></svg>
-        <span>Sound</span>
-      </button>
-    </nav>
+  <!-- Layout editor: pannello impostazioni a sinistra + anteprima appesa alla parete a destra -->
+  <main class="ss-editor">
+    <aside class="ss-panel" aria-label="Impostazioni" data-en-aria-label="Settings">
 
-    <!-- Panels (content built by JS) -->
-    <section class="panel" id="panel-rules" hidden role="dialog" aria-labelledby="t-rules">
-      <header class="panel-head"><h2 class="panel-title" id="t-rules">Rules</h2><span class="panel-sub">WHEN → IF → THEN · English or Italian</span><button class="panel-close" type="button" aria-label="Close">✕</button></header>
-      <div class="panel-body" id="rules-body"></div>
-    </section>
-    <section class="panel" id="panel-world" hidden role="dialog" aria-labelledby="t-world">
-      <header class="panel-head"><h2 class="panel-title" id="t-world">World</h2><span class="panel-sub">Physics of the scene</span><button class="panel-close" type="button" aria-label="Close">✕</button></header>
-      <div class="panel-body"></div>
-    </section>
-    <section class="panel" id="panel-fx" hidden role="dialog" aria-labelledby="t-fx">
-      <header class="panel-head"><h2 class="panel-title" id="t-fx">Effects</h2><span class="panel-sub">Particles, trails, glow</span><button class="panel-close" type="button" aria-label="Close">✕</button></header>
-      <div class="panel-body"></div>
-    </section>
-    <section class="panel" id="panel-music" hidden role="dialog" aria-labelledby="t-music">
-      <header class="panel-head"><h2 class="panel-title" id="t-music">Music</h2><span class="panel-sub">Song, scale and instrument</span><button class="panel-close" type="button" aria-label="Close">✕</button></header>
-      <div class="panel-body"></div>
-    </section>
-    <section class="panel" id="panel-scenes" hidden role="dialog" aria-labelledby="t-scenes">
-      <header class="panel-head"><h2 class="panel-title" id="t-scenes">Viral scenes</h2><span class="panel-sub">Load a template</span><button class="panel-close" type="button" aria-label="Close">✕</button></header>
-      <div class="panel-body"></div>
-    </section>
-    <section class="panel" id="panel-shape" hidden role="dialog" aria-labelledby="t-shape">
-      <header class="panel-head"><h2 class="panel-title" id="t-shape">Shape</h2><span class="panel-sub">Selected shape</span><button class="panel-close" type="button" aria-label="Close">✕</button></header>
-      <div class="panel-body"></div>
-    </section>
+      <!-- SEZIONE 1: Strumenti di disegno (Opzione A) -->
+      <details class="ss-section" id="sec-tools" open>
+        <summary>
+          <span data-en="Tools">Strumenti</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body">
+          <nav id="tools" class="ss-tool-grid" aria-label="Strumenti" data-en-aria-label="Tools">
+            <button class="tbtn ss-tool-btn" type="button" data-tool="ball" aria-pressed="true" title="Pallina — tocca per lanciare, trascina per mirare (1)" data-en-title="Ball — tap to drop, drag to launch (1)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3.2" class="fill"/></svg><span data-en="Ball">Pallina</span>
+            </button>
+            <button class="tbtn ss-tool-btn" type="button" data-tool="move" aria-pressed="false" title="Sposta — trascina gli oggetti, tocca una forma per modificarla (2)" data-en-title="Move — drag things, tap a shape to edit it (2)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.5v9M1.5 6h9M6 1.5 4.5 3M6 1.5 7.5 3M6 10.5 4.5 9M6 10.5 7.5 9M1.5 6 3 4.5M1.5 6 3 7.5M10.5 6 9 4.5M10.5 6 9 7.5"/></svg><span data-en="Move">Sposta</span>
+            </button>
+            <button class="tbtn ss-tool-btn" type="button" data-tool="line" aria-pressed="false" title="Linea — Shift blocca l'angolo (3)" data-en-title="Line — Shift snaps the angle (3)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5"/></svg><span data-en="Line">Linea</span>
+            </button>
+            <button class="tbtn ss-tool-btn" type="button" data-tool="ring" aria-pressed="false" title="Cerchio (4)" data-en-title="Circle (4)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3.8"/></svg><span data-en="Circle">Cerchio</span>
+            </button>
+            <button class="tbtn ss-tool-btn" type="button" data-tool="tri" aria-pressed="false" title="Triangolo (5)" data-en-title="Triangle (5)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2l4.5 8h-9z"/></svg><span data-en="Tri">Triangolo</span>
+            </button>
+            <button class="tbtn ss-tool-btn" type="button" data-tool="rect" aria-pressed="false" title="Rettangolo (6)" data-en-title="Rectangle (6)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="3" width="8" height="6" rx="1"/></svg><span data-en="Rect">Rettangolo</span>
+            </button>
+            <button class="tbtn ss-tool-btn" type="button" data-tool="erase" aria-pressed="false" title="Cancella — rimuovi oggetti interi (7)" data-en-title="Erase — remove whole objects (7)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 3 3 9"/></svg><span data-en="Erase">Cancella</span>
+            </button>
+            <button class="tbtn ss-tool-btn" type="button" data-tool="rubber" aria-pressed="false" title="Gomma — ritaglia pezzi dalle forme (8)" data-en-title="Rubber — carve pieces out of shapes (8)">
+              <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M7 2.5l3 3-4.5 4.5H3L1.5 8.5zM4.5 5.5l3 3"/></svg><span data-en="Rubber">Gomma</span>
+            </button>
+          </nav>
+        </div>
+      </details>
 
-    <div id="format-menu" class="menu" role="menu" hidden></div>
-    <div id="toast" role="status" aria-live="polite"></div>
-    <div id="modal" class="modal" hidden><div class="modal-card" role="dialog" aria-modal="true"></div></div>
-    <div id="drop-overlay" class="drop-overlay" hidden><span>Drop a MIDI or audio file to use it as the song</span></div>
-    <input type="file" id="song-input" hidden
-      accept=".mid,.midi,.kar,.smf,audio/midi,audio/mid,audio/x-midi,application/x-midi,.mp3,.m4a,.aac,.wav,.ogg,.oga,.opus,.flac,audio/*">
+      <!-- SEZIONE 2: Scena & Formato -->
+      <details class="ss-section" id="sec-scene" open>
+        <summary>
+          <span data-en="Scene &amp; Format">Scena e Formato</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body">
+          <div class="ss-row">
+            <span class="ss-row__label" data-en="Aspect ratio">Formato scena</span>
+            <button class="ss-btn ss-btn--sm" id="btn-format" type="button" aria-haspopup="menu" aria-expanded="false" title="Formato scena" data-en-title="Scene format">
+              <span id="lbl-format">9:16</span>
+              <span class="caret" aria-hidden="true"> ▾</span>
+            </button>
+          </div>
+          <div class="ss-row">
+            <span class="ss-row__label" data-en="Templates">Modelli virali</span>
+            <button class="ss-btn ss-btn--sm" id="btn-scenes" type="button" data-panel="scenes" aria-expanded="false">
+              <span data-en="Viral scenes">Scene virali</span>
+            </button>
+          </div>
+          <div class="ss-row">
+            <span class="ss-row__label" data-en="Clear canvas">Reset tela</span>
+            <button class="ss-btn ss-btn--sm" id="btn-clear" type="button" title="Pulisci la scena (annullabile)" data-en-title="Clear the scene (undoable)">
+              <span data-en="Clear scene">Pulisci scena</span>
+            </button>
+          </div>
+        </div>
+      </details>
 
-    <!-- Splash: unlocks audio with the first tap -->
-    <div id="splash" class="splash">
-      <div class="splash-inner">
-        <img src="assets/logo-mark.png" alt="Bouncical" class="splash-logo" width="480" height="338">
-        <p class="splash-sub" id="splash-sub">Draw shapes, drop balls, write rules — and let gravity compose the music.</p>
-        <button class="btn primary big" id="splash-start" type="button">▶ Start</button>
-        <p class="splash-or">or open a viral scene</p>
-        <div class="chips center" id="splash-scenes"></div>
-        <p class="splash-foot">🔊 Turn the sound on · works offline · no sign-up</p>
+      <!-- SEZIONE 3: Regole (Rules) -->
+      <details class="ss-section panel" id="panel-rules">
+        <summary>
+          <span data-en="Rules">Regole</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body" id="rules-body"></div>
+      </details>
+
+      <!-- SEZIONE 4: Musica (Music) -->
+      <details class="ss-section panel" id="panel-music">
+        <summary>
+          <span data-en="Music">Musica</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
+      <!-- SEZIONE 5: Mondo (World Physics) -->
+      <details class="ss-section panel" id="panel-world">
+        <summary>
+          <span data-en="World (Physics)">Mondo (Fisica)</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
+      <!-- SEZIONE 6: Effetti (FX) -->
+      <details class="ss-section panel" id="panel-fx">
+        <summary>
+          <span data-en="Effects (FX)">Effetti (FX)</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
+      <!-- SEZIONE 7: Scene virali (Templates) -->
+      <details class="ss-section panel" id="panel-scenes">
+        <summary>
+          <span data-en="Viral Scenes">Scene virali</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
+      <!-- SEZIONE 8: Ispettore Forma selezionata -->
+      <details class="ss-section panel" id="panel-shape" style="display:none">
+        <summary>
+          <span class="panel-title" data-en="Selected Shape">Forma selezionata</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
+      <!-- SEZIONE 9: Registra ed Esporta (Unica azione primaria corallo) -->
+      <details class="ss-section" id="sec-export" open>
+        <summary>
+          <span data-en="Record &amp; Export">Registra ed Esporta</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body">
+          <p class="ss-note" data-en="Record the scene in 1080p MP4 ready for TikTok, Shorts and Reels.">Registra la scena in MP4 1080p pronta per TikTok, Shorts e Reel.</p>
+          <button class="ss-btn ss-btn--primary ss-btn--block rec" id="btn-rec" type="button" title="Registra video" data-en-title="Record video" aria-pressed="false">
+            <span class="rec-dot" aria-hidden="true"></span>
+            <span id="rec-label" data-en="Record video">Registra video</span>
+            <span id="rec-time" class="rec-time"></span>
+          </button>
+        </div>
+      </details>
+
+    </aside>
+
+    <!-- Stage: Quadro appeso alla parete con luce chiara dietro -->
+    <section class="ss-stage" aria-label="Anteprima" data-en-aria-label="Preview">
+      <div class="ss-frame" id="stage-frame">
+        <div id="stage-wrap">
+          <canvas id="stage" aria-label="Physics scene"></canvas>
+          <div id="stage-hint" class="stage-hint" hidden data-en="Tap to drop a ball · draw shapes · press ▶">Tocca per far cadere una pallina · disegna forme · premi ▶</div>
+        </div>
       </div>
+
+      <!-- Barra di controllo sotto il quadro -->
+      <div class="ss-stage-bar" id="controls" aria-label="Controlli riproduzione" data-en-aria-label="Playback controls">
+        <button class="ss-btn ss-btn--sm play" id="btn-play" type="button" aria-pressed="false" title="Riproduci (Spazio)" data-en-title="Play (Space)">
+          <svg class="ss-icon i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
+          <svg class="ss-icon i-pause" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M3 2h2v8H3zM7 2h2v8H7z" class="fill"/></svg>
+          <span id="lbl-play" data-en="Play">Riproduci</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer con wordmark ScrollStudio e copyright -->
+  <footer class="ss-footer">
+    <img class="ss-only-light" src="assets/scrollstudio-wordmark.svg" alt="ScrollStudio" width="796" height="404">
+    <img class="ss-only-dark" src="assets/scrollstudio-wordmark-light.svg" alt="ScrollStudio" width="796" height="404">
+    <span>© 2026</span>
+  </footer>
+
+  <!-- Menu formato a comparsa -->
+  <div id="format-menu" class="ss-menu" role="menu" hidden></div>
+
+  <!-- Notifica Toast -->
+  <div id="toast" class="ss-toast" role="status" aria-live="polite"></div>
+
+  <!-- Modale generica -->
+  <div id="modal" class="ss-overlay" hidden>
+    <div class="ss-modal modal-card" role="dialog" aria-modal="true">
+      <button class="ss-icon-btn ss-icon-btn--bare ss-modal__close" type="button" aria-label="Chiudi" data-en-aria-label="Close">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 3 6 6M9 3 3 9"/></svg>
+      </button>
+      <h2 class="ss-modal__title modal-title"></h2>
+      <div class="ss-modal__body modal-body"></div>
+      <div class="ss-modal__actions modal-actions"></div>
+    </div>
+  </div>
+
+  <!-- Overlay Drag-and-drop -->
+  <div id="drop-overlay" class="ss-drop-overlay" hidden>
+    <div class="ss-drop">
+      <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8V2M3.5 4.5 6 2l2.5 2.5M2 10h8"/></svg>
+      <span data-en="Drop a MIDI or audio file to use it as the song">Trascina un file MIDI o audio per usarlo come brano</span>
+      <span class="ss-hint" data-en="MIDI, MP3, M4A, WAV">MIDI, MP3, M4A, WAV</span>
+    </div>
+  </div>
+
+  <input type="file" id="song-input" hidden accept=".mid,.midi,.kar,.smf,audio/midi,audio/mid,audio/x-midi,application/x-midi,.mp3,.m4a,.aac,.wav,.ogg,.oga,.opus,.flac,audio/*">
+
+  <!-- Splash: sblocco audio con il primo tocco -->
+  <div id="splash" class="ss-overlay splash">
+    <div class="ss-modal splash-inner" role="dialog" aria-labelledby="splash-title">
+      <div class="splash-brand">
+        <img src="assets/bouncical-logo.svg" alt="Bouncical" class="splash-logo" width="48" height="48">
+        <h2 id="splash-title" class="splash-title">Bouncical</h2>
+      </div>
+      <p class="splash-sub" id="splash-sub" data-en="Draw shapes, drop balls, write rules — and let gravity compose the music.">Disegna forme, lancia palline, scrivi regole — e lascia che la gravità componga la musica.</p>
+      <button class="ss-btn ss-btn--primary ss-btn--block" id="splash-start" type="button">
+        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
+        <span data-en="Start">Inizia</span>
+      </button>
+      <p class="splash-or" data-en="or open a viral scene">oppure apri una scena virale</p>
+      <div class="splash-scenes" id="splash-scenes"></div>
+      <p class="splash-foot" data-en="🔊 Turn the sound on · works offline · no sign-up">🔊 Attiva l'audio · funziona offline · nessuna registrazione</p>
     </div>
   </div>
 

@@ -42,6 +42,8 @@ const userDataDir = path.join(process.env.TEMP || 'C:\\temp', 'chrome-cdp-' + Da
 const chrome = spawn(chromePath, [
   '--headless=new',
   '--remote-debugging-port=9222',
+  '--remote-allow-origins=*',
+  '--disable-gpu',
   `--user-data-dir=${userDataDir}`,
   '--no-first-run',
   '--no-default-browser-check',
@@ -73,8 +75,9 @@ console.log('Connected to CDP at', wsUrl);
 
 const ws = new WebSocket(wsUrl);
 await new Promise((res, rej) => {
-  ws.onopen = res;
-  ws.onerror = rej;
+  ws.onopen = () => { console.log('ws opened'); res(); };
+  ws.onerror = (e) => { console.error('ws error', e); rej(e); };
+  ws.onclose = (e) => { console.log('ws closed', e.code, e.reason); };
 });
 
 let msgId = 0;
@@ -89,8 +92,12 @@ ws.onmessage = (event) => {
 
 function send(method, params = {}) {
   const id = ++msgId;
-  return new Promise((resolve) => {
-    callbacks.set(id, resolve);
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`Timeout on ${method}`)), 5000);
+    callbacks.set(id, (res) => {
+      clearTimeout(timer);
+      resolve(res);
+    });
     ws.send(JSON.stringify({ id, method, params }));
   });
 }

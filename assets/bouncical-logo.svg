@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Bouncical mark, redrawn from the repo's logo.png for avatar size: no wordmark, bolder lines and balls -->
+  <defs>
+    <radialGradient id="haze" cx="64" cy="66" r="60" gradientUnits="userSpaceOnUse" gradientTransform="translate(64 66) scale(1 .7) translate(-64 -66)">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity=".3"/>
+      <stop offset=".55" stop-color="#FFFFFF" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="shine" cx=".35" cy=".3" r=".7">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity=".9"/>
+      <stop offset=".45" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.4"/>
+    </filter>
+    <g id="lines" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M47.6 59.7 14.6 87.1h28.2"/>
+      <circle cx="65.7" cy="72.7" r="14.4"/>
+      <path d="M84 40.9 81.1 62.4l18.2-7.1z"/>
+      <rect x="85.9" y="78.4" width="27" height="9.1"/>
+    </g>
+    <g id="balls">
+      <circle cx="40.2" cy="58.4" r="4.6" fill="#1FB5FF"/>
+      <circle cx="46.8" cy="83.2" r="4.6" fill="#4FE04F"/>
+      <circle cx="63.5" cy="76.5" r="6" fill="#FF2FC1"/>
+      <circle cx="100.5" cy="56" r="4.4" fill="#FFD51A"/>
+    </g>
+  </defs>
+  <rect width="128" height="128" fill="#000000"/>
+  <rect width="128" height="128" fill="url(#haze)"/>
+  <use href="#lines" filter="url(#glow)"/>
+  <use href="#balls" filter="url(#glow)"/>
+  <use href="#lines"/>
+  <use href="#balls"/>
+  <g fill="url(#shine)">
+    <circle cx="40.2" cy="58.4" r="4.6"/>
+    <circle cx="46.8" cy="83.2" r="4.6"/>
+    <circle cx="63.5" cy="76.5" r="6"/>
+    <circle cx="100.5" cy="56" r="4.4"/>
+  </g>
+</svg>

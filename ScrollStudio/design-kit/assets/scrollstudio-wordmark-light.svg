@@ -1,6 +1,6 @@
 <svg role="img" aria-label="ScrollStudio" xmlns="http://www.w3.org/2000/svg" viewBox="220 334 796 404" width="796" height="404">
   <!-- Light drawing for the dark theme: same paths as scrollstudio-wordmark.svg,
-       letters in the dark --ink-700 (#C5C2BC), the ® as faint as on the light wall -->
+       letters in the dark ink-700 (#C5C2BC), the ® as faint as on the light wall -->
   <defs>
     <!-- Maschera per i tagli orizzontali di Scroll e STUDIO -->
     <mask id="cuts">

@@ -1,6 +1,6 @@
 /* ========== Bouncical — ui/panels.js ========== */
-/* One panel open at a time: bottom sheet in portrait, side drawer in
-   landscape (pure CSS). Esc or ✕ closes; toolbar buttons toggle. */
+/* Integrates panels as collapsible sections in .ss-panel (ScrollStudio family kit).
+   Esc or close buttons close; toolbar buttons toggle. */
 
 import { $, $$ } from './dom.js';
 
@@ -10,21 +10,38 @@ let openId = null;
 export function registerPanel(id, { onOpen, onClose } = {}) {
   hooks[id] = { onOpen, onClose };
   const el = $(`#panel-${id}`);
+  if (!el) return;
   const close = el.querySelector('.panel-close');
   if (close) close.addEventListener('click', () => closePanel());
+  if (el.tagName === 'DETAILS') {
+    el.addEventListener('toggle', () => {
+      if (el.open) {
+        openId = id;
+        $$(`[data-panel="${id}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
+        if (hooks[id] && hooks[id].onOpen) hooks[id].onOpen(el);
+      } else if (openId === id) {
+        openId = null;
+        $$(`[data-panel="${id}"]`).forEach(b => b.setAttribute('aria-expanded', 'false'));
+        if (hooks[id] && hooks[id].onClose) hooks[id].onClose(el);
+      }
+    });
+  }
 }
 
 export function openPanel(id) {
-  if (openId === id) return;
-  closePanel();
   const el = $(`#panel-${id}`);
   if (!el) return;
   openId = id;
+  el.style.display = '';
   el.hidden = false;
-  requestAnimationFrame(() => el.classList.add('open'));
+  if (el.tagName === 'DETAILS') {
+    el.open = true;
+  }
+  el.classList.add('open');
   $$(`[data-panel="${id}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
   document.body.classList.add('panel-open');
   if (hooks[id] && hooks[id].onOpen) hooks[id].onOpen(el);
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 export function closePanel() {
@@ -32,15 +49,24 @@ export function closePanel() {
   const id = openId;
   const el = $(`#panel-${id}`);
   openId = null;
-  el.classList.remove('open');
-  el.hidden = true;
-  $$(`[data-panel="${id}"]`).forEach(b => b.setAttribute('aria-expanded', 'false'));
+  if (el) {
+    el.classList.remove('open');
+    if (el.tagName === 'DETAILS') {
+      el.open = false;
+      if (id === 'shape') el.style.display = 'none';
+    } else {
+      el.hidden = true;
+    }
+    $$(`[data-panel="${id}"]`).forEach(b => b.setAttribute('aria-expanded', 'false'));
+  }
   document.body.classList.remove('panel-open');
   if (hooks[id] && hooks[id].onClose) hooks[id].onClose(el);
 }
 
 export function togglePanel(id) {
-  if (openId === id) closePanel();
+  const el = $(`#panel-${id}`);
+  if (!el) return;
+  if (el.tagName === 'DETAILS' ? el.open : openId === id) closePanel();
   else openPanel(id);
 }
 
