@@ -148,3 +148,12 @@
     --topbar-h: auto;
   }
 }
+
+/* ==========================================================================
+   Bouncical additions (ScrollStudio family alignment)
+   ========================================================================== */
+
+:root {
+  --panel-w: 340px; /* widest settings sheet: the max column of .ss-editor's panel */
+  --stage-w: 560px; /* widest stage column on wide screens */
+}

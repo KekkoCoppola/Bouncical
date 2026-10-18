@@ -15,17 +15,17 @@
 
 .ss-frame[data-aspect="9:16"] {
   aspect-ratio: 9 / 16;
-  width: min(100%, 300px, calc((100svh - 300px) * 9 / 16));
+  width: min(100%, 340px, calc((100svh - 260px) * 9 / 16));
 }
 
 .ss-frame[data-aspect="1:1"] {
   aspect-ratio: 1 / 1;
-  width: min(100%, 340px, calc(100svh - 320px));
+  width: min(100%, 360px, calc(100svh - 280px));
 }
 
 .ss-frame[data-aspect="16:9"] {
   aspect-ratio: 16 / 9;
-  width: min(100%, 460px, calc((100svh - 300px) * 16 / 9));
+  width: min(100%, 540px, calc((100svh - 260px) * 16 / 9));
 }
 
 .ss-frame[data-aspect="fit"] {
@@ -101,7 +101,7 @@
 }
 
 .ss-stage-bar .play {
-  min-width: 110px;
+  min-width: 130px;
 }
 
 .ss-stage-bar .play.running {
