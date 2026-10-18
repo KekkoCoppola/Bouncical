@@ -1,0 +1,1289 @@
+/* ScrollStudio family components — kit 1.1: temi (see CHANGELOG.md)
+   Every child app (Bouncical, TopFratmRanks, …) loads theme.js + tokens.css + this file + Urbanist 300/400.
+   Classes are prefixed ss-. Recipes are documented in FAMILY-DESIGN.md and shown in specimen.html.
+   Colours come only from tokens.css, so every recipe follows the light and the dark theme. */
+
+/* Base */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--wall-bottom);
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  font-family: var(--font);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-text);
+  color: var(--ink-700);
+  background-color: var(--wall-bottom);
+  background-image:
+    radial-gradient(120% 70% at 50% 0%, var(--wall-light), transparent 62%),
+    linear-gradient(180deg, var(--wall-top) 0%, var(--wall-mid) 55%, var(--wall-bottom) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: var(--fw-light);
+  line-height: var(--lh-tight);
+  color: var(--ink-900);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.ss-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Icons: 12-unit grid, thin stroke, currentColor */
+
+.ss-icon {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Topbar: ScrollStudio wordmark (back to the hub) / product, nav and language on the right */
+
+.ss-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  height: var(--topbar-h);
+  padding-inline: var(--gutter);
+  font-size: var(--fs-xs);
+  line-height: 1;
+}
+
+.ss-topbar__home {
+  flex: none;
+  transition: opacity var(--dur-hover) ease-out;
+}
+
+.ss-topbar__home:hover {
+  opacity: 0.72;
+}
+
+.ss-topbar__home img {
+  width: auto;
+  height: 32px;
+}
+
+.ss-topbar__sep {
+  flex: none;
+  width: 1px;
+  height: 22px;
+  background: var(--track);
+  transform: rotate(16deg);
+}
+
+.ss-topbar__product {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-width: 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-light);
+  color: var(--ink-900);
+}
+
+.ss-topbar__product img {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--hairline);
+}
+
+.ss-topbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  margin-left: auto;
+}
+
+/* Text links: ink-700, ink-900 on hover, the underline draws from the left */
+
+.ss-link {
+  position: relative;
+  padding-block: var(--s-1);
+  font: inherit;
+  color: var(--ink-700);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur-hover) ease-out;
+}
+
+.ss-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur-hover) ease-out;
+}
+
+.ss-link:hover,
+.ss-link[aria-current="page"],
+.ss-link[aria-selected="true"] {
+  color: var(--ink-900);
+}
+
+.ss-link:hover::after,
+.ss-link[aria-selected="true"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Language switch (same as the hub) */
+
+.ss-lang {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: var(--s-4);
+}
+
+.ss-lang__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: var(--s-1) 0;
+  font: inherit;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--ink-700);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur-hover) ease-out;
+}
+
+.ss-lang__option:hover,
+.ss-lang__option[aria-pressed="true"] {
+  color: var(--ink-900);
+}
+
+.ss-lang__flag {
+  width: 15px;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 2px;
+  box-shadow: 0 0 0 0.5px rgb(var(--shadow-ink) / 0.3);
+  filter: grayscale(1);
+  opacity: 0.5;
+  transition:
+    filter var(--dur-hover) ease-out,
+    opacity var(--dur-hover) ease-out;
+}
+
+.ss-lang__option:hover .ss-lang__flag,
+.ss-lang__option[aria-pressed="true"] .ss-lang__flag {
+  filter: none;
+  opacity: 1;
+}
+
+/* Theme switch: right after the language switch, same states. Icons only (sun, moon):
+   the idle one rests in --ink-500 as the idle flag rests in grey; hover and pressed go --ink-900 */
+
+.ss-theme {
+  display: flex;
+  align-items: center;
+}
+
+.ss-theme__option {
+  display: grid;
+  place-items: center;
+  width: var(--control-h-sm);
+  height: var(--control-h-sm);
+  padding: 0;
+  color: var(--ink-500);
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color var(--dur-hover) ease-out;
+}
+
+.ss-theme__option:hover,
+.ss-theme__option[aria-pressed="true"] {
+  color: var(--ink-900);
+}
+
+/* One element per theme (the wordmark is an <img>, it can't take currentColor).
+   With no data-theme (JS off) the light one shows */
+
+:root[data-theme="dark"] .ss-only-light,
+:root:not([data-theme="dark"]) .ss-only-dark {
+  display: none;
+}
+
+/* Page head: centred title and lede, like the hub hero */
+
+.ss-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--s-2) var(--gutter) var(--s-6);
+  text-align: center;
+}
+
+.ss-head__title {
+  font-size: var(--fs-xl);
+  text-wrap: balance;
+}
+
+.ss-head__lede {
+  max-width: 46ch;
+  margin-top: var(--s-2);
+  text-wrap: balance;
+}
+
+/* Buttons: pills you press. Paper by default; coral only for the one main action of the view */
+
+.ss-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  height: var(--control-h);
+  padding: 0 var(--s-4);
+  font: inherit;
+  font-size: var(--fs-sm);
+  line-height: 1;
+  color: var(--ink-900);
+  white-space: nowrap;
+  background: var(--paper);
+  border: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-raise);
+  cursor: pointer;
+  transition:
+    transform var(--dur-hover) ease-out,
+    box-shadow var(--dur-hover) ease-out,
+    color var(--dur-hover) ease-out;
+}
+
+.ss-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-raise-hover);
+}
+
+.ss-btn:active {
+  transform: none;
+  box-shadow: var(--shadow-raise);
+}
+
+.ss-btn--primary {
+  color: var(--on-coral);
+  background: var(--coral);
+  box-shadow: var(--shadow-coral);
+}
+
+.ss-btn--primary:hover {
+  box-shadow: var(--shadow-coral-hover);
+}
+
+.ss-btn--primary:active {
+  box-shadow: var(--shadow-coral);
+}
+
+.ss-btn--sm {
+  height: var(--control-h-sm);
+  padding: 0 var(--s-3);
+  font-size: var(--fs-xs);
+}
+
+.ss-btn--block {
+  width: 100%;
+}
+
+.ss-btn:disabled,
+.ss-btn[aria-disabled="true"] {
+  opacity: 0.4;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Icon buttons: circles. Paper, coral (the hub "+"), or bare */
+
+.ss-icon-btn {
+  display: grid;
+  place-items: center;
+  width: var(--control-h);
+  height: var(--control-h);
+  flex: none;
+  padding: 0;
+  color: var(--ink-900);
+  background: var(--paper);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--shadow-raise);
+  cursor: pointer;
+  transition:
+    transform var(--dur-hover) ease-out,
+    box-shadow var(--dur-hover) ease-out,
+    color var(--dur-hover) ease-out;
+}
+
+.ss-icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-raise-hover);
+}
+
+.ss-icon-btn--coral {
+  color: var(--on-coral-icon);
+  background: var(--coral);
+  box-shadow: var(--shadow-coral);
+}
+
+.ss-icon-btn--coral:hover {
+  box-shadow: var(--shadow-coral-hover);
+}
+
+.ss-icon-btn--bare {
+  width: var(--control-h-sm);
+  height: var(--control-h-sm);
+  color: var(--ink-700);
+  background: none;
+  box-shadow: none;
+}
+
+.ss-icon-btn--bare:hover {
+  color: var(--ink-900);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Fields: sunk into paper (--field), no border, 4px corners */
+
+.ss-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ss-label {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+  color: var(--ink-700);
+}
+
+.ss-hint {
+  font-size: var(--fs-xs);
+  color: var(--ink-500);
+}
+
+.ss-input,
+.ss-select,
+.ss-textarea {
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 var(--s-3);
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--ink-900);
+  background-color: var(--field);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: box-shadow var(--dur-hover) ease-out;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ss-input::placeholder,
+.ss-textarea::placeholder {
+  color: var(--ink-500);
+}
+
+.ss-input:hover,
+.ss-select:hover,
+.ss-textarea:hover {
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+.ss-input:focus-visible,
+.ss-select:focus-visible,
+.ss-textarea:focus-visible {
+  outline-offset: 2px;
+}
+
+.ss-textarea {
+  height: auto;
+  min-height: 72px;
+  padding-block: var(--s-2);
+  resize: vertical;
+}
+
+.ss-select {
+  padding-right: 32px;
+  background-image: var(--chevron);
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.ss-input--num {
+  width: 64px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Colour picker: a round swatch with a thin ring, like the hub avatars */
+
+.ss-swatch {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  padding: 0;
+  overflow: hidden;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px var(--swatch-ring),
+    0 1px 3px rgb(var(--shadow-ink) / 0.12);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ss-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.ss-swatch::-webkit-color-swatch {
+  border: 0;
+  border-radius: 50%;
+}
+
+.ss-swatch::-moz-color-swatch {
+  border: 0;
+  border-radius: 50%;
+}
+
+/* Setting row: label left, control right */
+
+.ss-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-height: var(--control-h);
+}
+
+.ss-row__label {
+  color: var(--ink-700);
+}
+
+/* Switch: grey track, light knob; on = ink-900 track with an --on-ink knob */
+
+.ss-switch {
+  position: relative;
+  width: 30px;
+  height: 18px;
+  flex: none;
+  margin: 0;
+  background: var(--track);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--dur-hover) ease-out;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ss-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: var(--knob);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(var(--shadow-ink) / 0.25);
+  transition: transform var(--dur-open) var(--ease-open);
+}
+
+.ss-switch:checked {
+  background: var(--ink-900);
+}
+
+.ss-switch:checked::after {
+  background: var(--on-ink);
+  transform: translateX(12px);
+}
+
+/* Segmented control: a sunk pill, the chosen option rises as paper */
+
+.ss-segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--field);
+  border-radius: var(--radius-pill);
+}
+
+.ss-segmented__option {
+  height: var(--control-h-sm);
+  padding: 0 var(--s-3);
+  font: inherit;
+  font-size: var(--fs-xs);
+  color: var(--ink-700);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition:
+    color var(--dur-hover) ease-out,
+    background-color var(--dur-fade) linear,
+    box-shadow var(--dur-fade) linear;
+}
+
+.ss-segmented__option:hover {
+  color: var(--ink-900);
+}
+
+.ss-segmented__option[aria-pressed="true"] {
+  color: var(--ink-900);
+  background: var(--paper);
+  box-shadow: var(--shadow-raise);
+}
+
+/* Range: 2px track, ink-900 fill (set --p from JS), light knob */
+
+.ss-range {
+  --p: 50%;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  background:
+    linear-gradient(var(--ink-900), var(--ink-900)) 0 50% / var(--p) 2px no-repeat,
+    linear-gradient(var(--track), var(--track)) 0 50% / 100% 2px no-repeat;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ss-range::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--knob);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgb(var(--shadow-ink) / 0.12),
+    0 2px 6px rgb(var(--shadow-ink) / 0.25);
+  transition: transform var(--dur-fade) linear;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ss-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--knob);
+  border: 0;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgb(var(--shadow-ink) / 0.12),
+    0 2px 6px rgb(var(--shadow-ink) / 0.25);
+}
+
+.ss-range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.ss-range::-moz-range-track {
+  background: none;
+}
+
+/* Panel: paper on the wall */
+
+.ss-panel {
+  padding: var(--s-1) var(--s-5);
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+}
+
+/* Collapsible section inside a panel (<details>), separated by a hairline */
+
+.ss-section + .ss-section {
+  border-top: 1px solid var(--hairline);
+}
+
+.ss-section > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 14px 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-light);
+  color: var(--ink-900);
+  list-style: none;
+  cursor: pointer;
+}
+
+.ss-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.ss-section__count {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  color: var(--ink-500);
+}
+
+.ss-section__chev {
+  margin-left: auto;
+  color: var(--ink-700);
+  transition: transform var(--dur-open) var(--ease-open);
+}
+
+.ss-section[open] .ss-section__chev {
+  transform: rotate(180deg);
+}
+
+.ss-section__body {
+  display: grid;
+  gap: var(--s-3);
+  padding-bottom: 18px;
+}
+
+/* Editor layout: settings panel on the left, the stage on the wall */
+
+.ss-editor {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: var(--s-6);
+  align-items: start;
+  padding: 0 var(--gutter) var(--s-7);
+  overflow-x: clip; /* the stage light must not widen the page; clip keeps sticky working */
+}
+
+/* Stage: the preview hangs on the wall like a hub card, with the same light behind it */
+
+.ss-stage {
+  position: sticky;
+  top: var(--s-5);
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.ss-stage::before {
+  content: "";
+  position: absolute;
+  inset: -8% -30% 20%;
+  z-index: -1;
+  background: radial-gradient(closest-side, var(--wall-glow), var(--stage-glow-end));
+  pointer-events: none;
+}
+
+.ss-frame {
+  position: relative;
+  width: min(100%, 300px, calc((100svh - 300px) * 9 / 16));
+  min-width: 180px;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: var(--video-ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-paper);
+}
+
+.ss-frame > video,
+.ss-frame > canvas,
+.ss-frame > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Timeline: one segment per clip (flex-grow = duration), a 2px scrub track and a hairline playhead */
+
+.ss-timeline {
+  display: grid;
+  gap: var(--s-3);
+  width: 100%;
+  max-width: 560px;
+}
+
+.ss-timeline__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.ss-time {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-700);
+}
+
+.ss-time b {
+  font-weight: inherit;
+  color: var(--ink-900);
+}
+
+.ss-timeline__bar .ss-time:last-child {
+  margin-left: auto;
+}
+
+.ss-timeline__lanes {
+  --t: 0%;
+  position: relative;
+  display: grid;
+  gap: var(--s-2);
+}
+
+.ss-segments {
+  display: flex;
+  gap: 3px;
+  height: 40px;
+}
+
+.ss-segment {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: var(--len, 1) 1 0;
+  min-width: 0;
+  padding: 0 6px 0 4px;
+  overflow: hidden;
+  font: inherit;
+  font-size: var(--fs-xs);
+  color: var(--ink-700);
+  text-align: left;
+  background: var(--paper);
+  border: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 3px rgb(var(--shadow-ink) / 0.1);
+  cursor: pointer;
+  transition:
+    transform var(--dur-hover) ease-out,
+    box-shadow var(--dur-hover) ease-out,
+    color var(--dur-hover) ease-out;
+}
+
+.ss-segment:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-raise);
+}
+
+.ss-segment[aria-current="true"] {
+  color: var(--ink-900);
+  box-shadow: inset 0 0 0 1px var(--ink-900);
+}
+
+.ss-segment__thumb {
+  width: 18px;
+  height: 32px;
+  flex: none;
+  background: var(--video-ink) center / cover;
+  border-radius: var(--radius-sm);
+}
+
+.ss-segment__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ss-scrub {
+  position: relative;
+  height: 14px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.ss-scrub::before,
+.ss-scrub__fill {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 1px;
+}
+
+.ss-scrub::before {
+  right: 0;
+  background: var(--track);
+}
+
+.ss-scrub__fill {
+  width: var(--t);
+  background: var(--ink-900);
+}
+
+.ss-playhead {
+  position: absolute;
+  top: -4px;
+  bottom: 0;
+  left: var(--t);
+  width: 0;
+  pointer-events: none;
+}
+
+.ss-playhead::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 7px;
+  left: -0.5px;
+  width: 1px;
+  background: var(--ink-900);
+}
+
+.ss-playhead::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  background: var(--knob);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px var(--ink-900),
+    0 2px 6px rgb(var(--shadow-ink) / 0.25);
+}
+
+/* Clip list item (draggable): rank, 9:16 thumb, name and duration */
+
+.ss-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ss-clip {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 6px var(--s-2);
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgb(var(--shadow-ink) / 0.08);
+  transition:
+    transform var(--dur-hover) ease-out,
+    box-shadow var(--dur-hover) ease-out;
+}
+
+.ss-clip:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-raise);
+}
+
+.ss-clip.is-active {
+  box-shadow: inset 0 0 0 1px var(--ink-900);
+}
+
+.ss-clip.is-dragging {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-paper);
+}
+
+.ss-clip.is-drop-target {
+  box-shadow: 0 -2px 0 var(--ink-900);
+}
+
+.ss-clip__rank {
+  width: 24px;
+  flex: none;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-light);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--ink-900);
+  text-align: center;
+}
+
+.ss-clip__thumb {
+  width: 27px;
+  height: 48px;
+  flex: none;
+  background: var(--video-ink) center / cover;
+  border-radius: var(--radius-sm);
+}
+
+.ss-clip__meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.ss-clip__name,
+.ss-clip__dur {
+  display: block;
+}
+
+.ss-clip__name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--ink-900);
+}
+
+.ss-clip__dur {
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-500);
+}
+
+.ss-clip__handle {
+  color: var(--ink-500);
+  cursor: grab;
+}
+
+/* Drop zone for files: dashed hairline on the field, glows like the wall when hovered */
+
+.ss-drop {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  padding: var(--s-5) var(--s-4);
+  color: var(--ink-700);
+  text-align: center;
+  border: 1px dashed var(--line-dashed);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-hover) ease-out,
+    border-color var(--dur-hover) ease-out;
+}
+
+.ss-drop:hover,
+.ss-drop.is-over {
+  background: var(--wall-glow);
+  border-color: var(--ink-700);
+}
+
+/* Progress (export): big light percentage over a 2px track */
+
+.ss-progress {
+  display: grid;
+  gap: var(--s-2);
+}
+
+.ss-progress__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.ss-progress__value {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-light);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-900);
+}
+
+.ss-progress__track {
+  height: 2px;
+  overflow: hidden;
+  background: var(--track);
+  border-radius: 1px;
+}
+
+.ss-progress__fill {
+  width: var(--p, 0%);
+  height: 100%;
+  background: var(--ink-900);
+  transition: width var(--dur-fade) linear;
+}
+
+/* Badge: small sunk pill */
+
+.ss-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--s-2);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--ink-700);
+  white-space: nowrap;
+  background: var(--field);
+  border-radius: var(--radius-pill);
+}
+
+/* Notes: errors and warnings are ink text with a dot, never red blocks */
+
+.ss-note {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  color: var(--ink-900);
+}
+
+.ss-note::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: var(--ink-500);
+  border-radius: 50%;
+  transform: translateY(-1px);
+}
+
+.ss-note--error::before {
+  background: var(--coral);
+}
+
+/* Modal: the wall blurs and fades back (--overlay), a sheet of paper comes forward */
+
+.ss-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: var(--overlay);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: ss-fade var(--dur-fade) linear;
+}
+
+.ss-modal {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 28px 28px var(--s-5);
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-paper);
+  animation: ss-rise var(--dur-open) var(--ease-open);
+}
+
+.ss-modal__title {
+  font-size: var(--fs-lg);
+}
+
+.ss-modal__body {
+  display: grid;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+
+.ss-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+}
+
+.ss-modal__close {
+  position: absolute;
+  top: var(--s-3);
+  right: var(--s-3);
+}
+
+/* Steps (wizard): numbers in light type, the current one in ink-900 */
+
+.ss-steps {
+  display: flex;
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-xs);
+  color: var(--ink-500);
+  list-style: none;
+  counter-reset: ss-step;
+}
+
+.ss-steps li {
+  counter-increment: ss-step;
+}
+
+.ss-steps li::before {
+  content: counter(ss-step) " ";
+  font-size: var(--fs-md);
+  font-weight: var(--fw-light);
+}
+
+.ss-steps [aria-current="step"] {
+  color: var(--ink-900);
+}
+
+/* Toast */
+
+.ss-toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--s-5);
+  z-index: 60;
+  padding: 10px var(--s-4);
+  color: var(--ink-900);
+  background: var(--paper);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-panel);
+  transform: translateX(-50%);
+  animation: ss-rise var(--dur-open) var(--ease-open);
+}
+
+/* Footer (same as the hub) */
+
+.ss-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: 22px var(--gutter);
+  font-size: var(--fs-xs);
+}
+
+.ss-footer img {
+  width: auto;
+  height: 30px;
+}
+
+@keyframes ss-fade {
+  from { opacity: 0; }
+}
+
+@keyframes ss-rise {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+/* Narrow screens: the stage goes first, the panel follows */
+
+@media (max-width: 860px) {
+  .ss-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ss-stage {
+    position: relative;
+    top: auto;
+    order: -1;
+  }
+
+  .ss-frame {
+    width: min(62vw, 300px, calc((100svh - 280px) * 9 / 16));
+  }
+}
+
+@media (max-width: 640px) {
+  .ss-topbar {
+    flex-wrap: wrap;
+    row-gap: var(--s-4);
+    padding-top: 22px;
+  }
+
+  .ss-topbar__home img {
+    height: 30px;
+  }
+
+  .ss-topbar__nav {
+    order: 1;
+    width: 100%;
+    gap: 22px;
+    margin-left: 0;
+  }
+
+  .ss-lang {
+    margin-left: auto;
+  }
+
+  /* Row 1 (wordmark, product, language) has no room left for the theme switch at 375px,
+     so it closes row 2: on the right of the nav, or alone on the right with no nav */
+  .ss-theme {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .ss-topbar:has(.ss-theme) .ss-topbar__nav {
+    width: calc(100% - 2 * var(--control-h-sm) - var(--s-4));
+  }
+
+  .ss-topbar:not(:has(.ss-topbar__nav)) .ss-theme {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .ss-modal {
+    padding: var(--s-5) var(--s-5) var(--s-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+}

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- TopFratmRanks mark: a tricolour podium (2nd green, 1st white, 3rd red) crowned in gold -->
+  <defs>
+    <radialGradient id="bg" cx="64" cy="48" r="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2A2A2F"/>
+      <stop offset="1" stop-color="#0E0E10"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD866"/>
+      <stop offset="1" stop-color="#F0A21E"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" fill="url(#bg)"/>
+  <path fill="url(#gold)" d="M53 46.5 50.5 32l8.2 6.4L64 28.5l5.3 9.9 8.2-6.4L75 46.5z"/>
+  <circle cx="64" cy="27.5" r="2.4" fill="#FFD866"/>
+  <path fill="#2FA84F" d="M28 101V72a3 3 0 0 1 3-3h20v32z"/>
+  <path fill="#F4F5F0" d="M52.5 101V55a3 3 0 0 1 3-3h17a3 3 0 0 1 3 3v46z"/>
+  <path fill="#E0393E" d="M77 101V82h20a3 3 0 0 1 3 3v16z"/>
+  <path fill="#0E0E10" d="M62.2 63.5h4.6V80h-4.6zm-3.4 2.6 3.4-2.6v4l-3.4 2z"/>
+</svg>
