@@ -2,7 +2,7 @@
 /* Toolbar buttons, format menu, panels (World, FX, Music, Scenes, Shape
    inspector), recording flow, song loading and keyboard shortcuts. */
 
-import { settings, setSetting, resetSection, ASPECTS } from '../config.js';
+import { settings, setSetting, resetSection, ASPECTS, WATERMARK_LOCKED } from '../config.js';
 import { $, $$, h, toast, openModal, closeModal, confirmDialog, isModalOpen } from './dom.js';
 import { slider, toggle, select, segmented, swatches, section, button } from './form.js';
 import { registerPanel, openPanel, closePanel, togglePanel, currentPanel } from './panels.js';
@@ -188,7 +188,10 @@ function buildFx(body) {
       slider({ label: 'Shake strength', min: 0.2, max: 2, step: 0.1, value: f.shakeAmount, format: v => `${fmt2(v)}×`, onInput: set('fx', 'shakeAmount') }),
       toggle({ label: 'Background pulses with notes', value: f.bgPulse, onChange: set('fx', 'bgPulse') }),
       toggle({ label: 'Show note names', value: f.noteLabels, onChange: set('fx', 'noteLabels') }),
-      toggle({ label: 'Logo watermark', value: f.watermark, onChange: set('fx', 'watermark') })),
+      toggle({
+        label: 'Logo watermark', value: WATERMARK_LOCKED || f.watermark, onChange: set('fx', 'watermark'),
+        locked: WATERMARK_LOCKED && 'Locked — unlock to remove the watermark',
+      })),
     resetButton('fx', () => buildFx(body)),
   );
 }

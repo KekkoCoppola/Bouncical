@@ -2,7 +2,7 @@
 /* Draws the scene into the stage canvas (world units → backing pixels).
    Everything visible in a recording is drawn here, background included. */
 
-import { settings } from './config.js';
+import { settings, WATERMARK_LOCKED } from './config.js';
 import { stage } from './stage.js';
 import { scene } from './scene.js';
 import { rt } from './physics.js';
@@ -20,7 +20,8 @@ logo.onload = () => { bgKey = ''; };
 let bgCanvas = null, bgKey = '';
 function background() {
   const { canvas } = stage;
-  const key = `${canvas.width}x${canvas.height}:${settings.fx.watermark}:${logo.complete}`;
+  const watermark = WATERMARK_LOCKED || settings.fx.watermark;
+  const key = `${canvas.width}x${canvas.height}:${watermark}:${logo.complete}`;
   if (key === bgKey && bgCanvas) return bgCanvas;
   bgKey = key;
   bgCanvas = bgCanvas || document.createElement('canvas');
@@ -34,7 +35,7 @@ function background() {
   grd.addColorStop(1, '#020205');
   g.fillStyle = grd;
   g.fillRect(0, 0, w, h);
-  if (settings.fx.watermark && logo.complete && logo.naturalWidth) {
+  if (watermark && logo.complete && logo.naturalWidth) {
     const lw = Math.min(w, h) * 0.72, lh = (lw * logo.naturalHeight) / logo.naturalWidth;
     g.globalAlpha = 0.075;
     g.drawImage(logo, (w - lw) / 2, (h - lh) / 2, lw, lh);

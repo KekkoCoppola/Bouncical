@@ -73,6 +73,7 @@ L'editor (`.ss-editor` = `.ss-head` + `.ss-panel.ss-editor__make` + `.ss-stage` 
 ### Controlli modulo
 - **Slider (`.range`)**: Traccia da 2px, riempimento live `--ink-900`, manopola tonda `--knob` con ombra morbida.
 - **Switch (`.switch`)**: Traccia `--track` con manopola `--knob`; attivo con traccia `--ink-900` e manopola `--on-ink`.
+- **Switch bloccato** (`toggle({ locked })` in `js/ui/form.js`, `.flock`): una funzione ancora da sbloccare tiene il suo valore, con un catenaccio (`.ss-icon`, `--ink-500`) accanto all'etichetta e il cursore `not-allowed`; lo switch è `aria-disabled`, così un tocco, un clic o Spazio mostrano il motivo in un toast. Oggi lo usa solo *Logo watermark* (Effetti): con `WATERMARK_LOCKED` in `js/config.js` il logo resta sul quadro e nei video, qualunque valore sia salvato.
 - **Select (`.fselect`)**: Incassato in `--field`, chevron SVG da token (`--chevron`), senza bordi netti.
 - **Segmented (`.seg`, `.seg-btn`)**: Pillola incassata con l'opzione selezionata sollevata su `--paper` con `--shadow-raise`.
 - **Palette colori (`.swatches`, `.swatch`)**: Cerchietti con anello sottile `--swatch-ring`, selezione con doppio anello.
