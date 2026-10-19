@@ -1287,3 +1287,86 @@ h3 {
     transition-delay: 0ms !important;
   }
 }
+
+/* ==========================================================================
+   Bouncical additions (not in the hub kit yet)
+   Derived with the "Componenti nuovi" procedure of FAMILY-DESIGN.md, tokens only.
+   Aligns layout, contrast and proportions with TopFratmRanks and ScrollStudio.
+   ========================================================================== */
+
+/* N16 Wide screens: the kit's stage column takes all the wall left of the panel, so on a large
+   screen the preview floats far from its controls and off the title's axis. Here the
+   stage column stops at the content's width and panel + stage stay one group, centred under
+   the title. The page stays as wide as before: the light behind the stage is not cut */
+@media (min-width: 861px) {
+  .ss-head {
+    padding: var(--s-2) var(--gutter) var(--s-3);
+  }
+
+  .ss-editor {
+    grid-template-columns: minmax(280px, var(--panel-w)) auto;
+    justify-content: center;
+    gap: var(--s-5);
+    padding: 0 var(--gutter) var(--s-3);
+  }
+
+  .ss-stage {
+    position: sticky;
+    top: var(--s-2);
+    gap: var(--s-2);
+  }
+}
+
+/* App choice (asked by the user, 2026-10-18; not in the hub kit): every button except the
+   coral main action is ink with on-ink text, for contrast on paper. Same for the chosen
+   segmented option. Hover goes one ink step lighter. Bare icon buttons stay bare */
+
+.ss-btn:not(.ss-btn--primary),
+.ss-icon-btn:not(.ss-icon-btn--bare):not(.ss-icon-btn--coral) {
+  color: var(--on-ink);
+  background: var(--ink-900);
+  transition:
+    transform var(--dur-hover) ease-out,
+    box-shadow var(--dur-hover) ease-out,
+    background-color var(--dur-hover) ease-out;
+}
+
+.ss-btn:not(.ss-btn--primary):hover,
+.ss-icon-btn:not(.ss-icon-btn--bare):not(.ss-icon-btn--coral):hover {
+  background: var(--ink-700);
+}
+
+.ss-segmented__option[aria-pressed="true"] {
+  color: var(--on-ink);
+  background: var(--ink-900);
+}
+
+/* App choice: disabled buttons stay readable (sink into paper with --ink-500) */
+.ss-btn:disabled,
+.ss-btn[aria-disabled="true"],
+.ss-icon-btn:not(.ss-icon-btn--bare):disabled {
+  opacity: 1;
+  color: var(--ink-500);
+  background: var(--field);
+}
+
+/* Missing states: hover on swatches and switches */
+.ss-swatch {
+  transition: box-shadow var(--dur-hover) ease-out;
+}
+
+.ss-swatch:hover {
+  box-shadow:
+    0 0 0 1px var(--ink-500),
+    0 1px 3px rgb(var(--shadow-ink) / 0.12);
+}
+
+.ss-switch::after {
+  transition:
+    transform var(--dur-open) var(--ease-open),
+    box-shadow var(--dur-hover) ease-out;
+}
+
+.ss-switch:hover::after {
+  box-shadow: var(--shadow-raise-hover);
+}
