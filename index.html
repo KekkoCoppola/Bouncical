@@ -60,15 +60,17 @@
     </div>
   </header>
 
-  <!-- Titolo della pagina (stesse parole dell'hub) -->
-  <div class="ss-head">
-    <h1 class="ss-head__title" data-en="Physics music sandbox">Musica dalla fisica</h1>
-    <p class="ss-head__lede" data-en="Make those viral videos of balls bouncing to the beat, ready for TikTok and Instagram.">Crea i video virali delle palline che rimbalzano a tempo di musica, pronti per TikTok e Instagram.</p>
-  </div>
-
-  <!-- Layout editor: pannello impostazioni a sinistra + anteprima appesa alla parete a destra -->
+  <!-- Layout editor (N17): titolo, foglio "make", anteprima al centro, foglio "finish".
+       L'anteprima prende l'altezza della finestra; i fogli le stanno accanto (o sotto, su telefono) -->
   <main class="ss-editor">
-    <aside class="ss-panel" aria-label="Impostazioni" data-en-aria-label="Settings">
+    <!-- Titolo della pagina (stesse parole dell'hub) -->
+    <div class="ss-head">
+      <h1 class="ss-head__title" data-en="Physics music sandbox">Musica dalla fisica</h1>
+      <p class="ss-head__lede" data-en="Make those viral videos of balls bouncing to the beat, ready for TikTok and Instagram.">Crea i video virali delle palline che rimbalzano a tempo di musica, pronti per TikTok e Instagram.</p>
+    </div>
+
+    <!-- Foglio "make": cosa costruisci sulla scena -->
+    <aside class="ss-panel ss-editor__make" aria-label="Scena e strumenti" data-en-aria-label="Scene and tools">
 
       <!-- SEZIONE 1: Strumenti di disegno (Opzione A) -->
       <details class="ss-section" id="sec-tools" open>
@@ -106,6 +108,15 @@
         </div>
       </details>
 
+      <!-- SEZIONE 8: Ispettore Forma selezionata -->
+      <details class="ss-section panel" id="panel-shape" style="display:none">
+        <summary>
+          <span class="panel-title" data-en="Selected Shape">Forma selezionata</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
       <!-- SEZIONE 2: Scena & Formato -->
       <details class="ss-section" id="sec-scene" open>
         <summary>
@@ -135,6 +146,39 @@
         </div>
       </details>
 
+    </aside>
+
+    <!-- Stage: Quadro appeso alla parete con luce chiara dietro -->
+    <section class="ss-stage" aria-label="Anteprima" data-en-aria-label="Preview">
+      <div class="ss-frame" id="stage-frame">
+        <div id="stage-wrap">
+          <canvas id="stage" aria-label="Physics scene"></canvas>
+          <div id="stage-hint" class="stage-hint" hidden data-en="Tap to drop a ball · draw shapes · press ▶">Tocca per far cadere una pallina · disegna forme · premi ▶</div>
+        </div>
+      </div>
+
+      <!-- Barra di controllo sotto il quadro -->
+      <div class="ss-stage-bar" id="controls" aria-label="Controlli riproduzione" data-en-aria-label="Playback controls">
+        <button class="ss-btn ss-btn--sm play" id="btn-play" type="button" aria-pressed="false" title="Riproduci (Spazio)" data-en-title="Play (Space)">
+          <svg class="ss-icon i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
+          <svg class="ss-icon i-pause" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M3 2h2v8H3zM7 2h2v8H7z" class="fill"/></svg>
+          <span id="lbl-play" data-en="Play">Riproduci</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Foglio "finish": scene pronte, come si comporta, come suona, cosa esce -->
+    <aside class="ss-panel ss-editor__finish" aria-label="Impostazioni" data-en-aria-label="Settings">
+
+      <!-- SEZIONE 7: Scene virali (Templates) -->
+      <details class="ss-section panel" id="panel-scenes">
+        <summary>
+          <span data-en="Viral Scenes">Scene virali</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
       <!-- SEZIONE 3: Regole (Rules) -->
       <details class="ss-section panel" id="panel-rules">
         <summary>
@@ -142,15 +186,6 @@
           <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
         </summary>
         <div class="ss-section__body panel-body" id="rules-body"></div>
-      </details>
-
-      <!-- SEZIONE 4: Musica (Music) -->
-      <details class="ss-section panel" id="panel-music">
-        <summary>
-          <span data-en="Music">Musica</span>
-          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
-        </summary>
-        <div class="ss-section__body panel-body"></div>
       </details>
 
       <!-- SEZIONE 5: Mondo (World Physics) -->
@@ -162,28 +197,19 @@
         <div class="ss-section__body panel-body"></div>
       </details>
 
+      <!-- SEZIONE 4: Musica (Music) -->
+      <details class="ss-section panel" id="panel-music">
+        <summary>
+          <span data-en="Music">Musica</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
       <!-- SEZIONE 6: Effetti (FX) -->
       <details class="ss-section panel" id="panel-fx">
         <summary>
           <span data-en="Effects (FX)">Effetti (FX)</span>
-          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
-        </summary>
-        <div class="ss-section__body panel-body"></div>
-      </details>
-
-      <!-- SEZIONE 7: Scene virali (Templates) -->
-      <details class="ss-section panel" id="panel-scenes">
-        <summary>
-          <span data-en="Viral Scenes">Scene virali</span>
-          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
-        </summary>
-        <div class="ss-section__body panel-body"></div>
-      </details>
-
-      <!-- SEZIONE 8: Ispettore Forma selezionata -->
-      <details class="ss-section panel" id="panel-shape" style="display:none">
-        <summary>
-          <span class="panel-title" data-en="Selected Shape">Forma selezionata</span>
           <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
         </summary>
         <div class="ss-section__body panel-body"></div>
@@ -206,25 +232,6 @@
       </details>
 
     </aside>
-
-    <!-- Stage: Quadro appeso alla parete con luce chiara dietro -->
-    <section class="ss-stage" aria-label="Anteprima" data-en-aria-label="Preview">
-      <div class="ss-frame" id="stage-frame">
-        <div id="stage-wrap">
-          <canvas id="stage" aria-label="Physics scene"></canvas>
-          <div id="stage-hint" class="stage-hint" hidden data-en="Tap to drop a ball · draw shapes · press ▶">Tocca per far cadere una pallina · disegna forme · premi ▶</div>
-        </div>
-      </div>
-
-      <!-- Barra di controllo sotto il quadro -->
-      <div class="ss-stage-bar" id="controls" aria-label="Controlli riproduzione" data-en-aria-label="Playback controls">
-        <button class="ss-btn ss-btn--sm play" id="btn-play" type="button" aria-pressed="false" title="Riproduci (Spazio)" data-en-title="Play (Space)">
-          <svg class="ss-icon i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
-          <svg class="ss-icon i-pause" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M3 2h2v8H3zM7 2h2v8H7z" class="fill"/></svg>
-          <span id="lbl-play" data-en="Play">Riproduci</span>
-        </button>
-      </div>
-    </section>
   </main>
 
   <!-- Footer con wordmark ScrollStudio e copyright -->

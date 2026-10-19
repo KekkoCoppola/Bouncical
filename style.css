@@ -8,88 +8,15 @@
   display: none !important;
 }
 
-/* ─── STAGE & FRAME (FULL SIZE VIEWPORT HEIGHT) ─── */
-:root {
-  --stage-frame-h: calc(100vh - 160px);
-  --stage-frame-h: calc(100svh - 160px);
-}
-
+/* ─── STAGE & FRAME ───
+   Size and shape come from N17 in css/family.css: the frame takes the scene's format
+   (--frame-ratio) and the window's height (--stage-chrome). Here only the change of format
+   is animated */
 .ss-frame {
-  position: relative;
-  overflow: hidden;
-  background: var(--video-ink);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-paper);
   transition:
     aspect-ratio var(--dur-open) var(--ease-open),
     width var(--dur-open) var(--ease-open),
     height var(--dur-open) var(--ease-open);
-}
-
-@media (min-width: 861px) {
-  .ss-frame {
-    height: var(--stage-frame-h);
-    max-height: var(--stage-frame-h);
-    min-height: 280px;
-    width: auto;
-    max-width: calc(100vw - var(--panel-w) - 2 * var(--gutter) - var(--s-5) - 20px);
-  }
-
-  .ss-frame[data-aspect="9:16"] {
-    aspect-ratio: 9 / 16;
-    height: var(--stage-frame-h);
-    max-height: var(--stage-frame-h);
-    width: auto;
-  }
-
-  .ss-frame[data-aspect="1:1"] {
-    aspect-ratio: 1 / 1;
-    height: var(--stage-frame-h);
-    max-height: var(--stage-frame-h);
-    width: auto;
-  }
-
-  .ss-frame[data-aspect="16:9"] {
-    aspect-ratio: 16 / 9;
-    height: min(var(--stage-frame-h), calc((100vw - var(--panel-w) - 2 * var(--gutter) - var(--s-5) - 20px) * 9 / 16));
-    max-height: var(--stage-frame-h);
-    width: auto;
-  }
-
-  .ss-frame[data-aspect="fit"] {
-    aspect-ratio: auto;
-    height: var(--stage-frame-h);
-    max-height: var(--stage-frame-h);
-    width: 100%;
-    min-width: 480px;
-  }
-}
-
-@media (max-width: 860px) {
-  .ss-frame[data-aspect="9:16"] {
-    aspect-ratio: 9 / 16;
-    height: min(60vh, calc((100vw - 2 * var(--gutter)) * 16 / 9));
-    width: auto;
-    max-width: 100%;
-  }
-
-  .ss-frame[data-aspect="1:1"] {
-    aspect-ratio: 1 / 1;
-    width: min(85vw, 360px);
-    height: auto;
-  }
-
-  .ss-frame[data-aspect="16:9"] {
-    aspect-ratio: 16 / 9;
-    width: 100%;
-    height: auto;
-  }
-
-  .ss-frame[data-aspect="fit"] {
-    aspect-ratio: auto;
-    width: 100%;
-    height: 50vh;
-  }
 }
 
 #stage-wrap {

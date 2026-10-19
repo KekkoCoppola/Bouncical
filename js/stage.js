@@ -42,9 +42,19 @@ export function availSize() {
   return { w: Math.max(80, r.width - 12), h: Math.max(80, r.height - 12) };
 }
 
+// The frame on the wall takes the scene's format (N17 in css/family.css): the editor gets
+// --frame-ratio (width / height) and data-aspect; 'fit' fills the space the layout gives it.
+function shapeFrame(aspect) {
+  const editor = stage.wrap.closest('.ss-editor');
+  if (!editor) return;
+  editor.dataset.aspect = aspect;
+  if (aspect !== 'fit') editor.style.setProperty('--frame-ratio', String(ASPECTS[aspect].w / ASPECTS[aspect].h));
+}
+
 // World size for an aspect; 'fit' takes the space available right now.
 export function worldSizeFor(aspect) {
   if (aspect !== 'fit') return { w: ASPECTS[aspect].w, h: ASPECTS[aspect].h };
+  shapeFrame('fit'); // measure the fit frame, not the previous format's one
   const a = availSize();
   // Keep the logical size in a sane range so physics feel the same.
   const k = clamp(800 / Math.max(a.w, a.h), 0.5, 1.6);
@@ -55,6 +65,7 @@ export function setWorld(aspect, w, h) {
   stage.aspect = aspect;
   stage.W = w;
   stage.H = h;
+  shapeFrame(aspect);
   layout(true);
 }
 

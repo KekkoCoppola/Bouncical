@@ -91,12 +91,14 @@ function bindFormatMenu() {
     if (!menu.hidden) { hideMenu(); return; }
     $$('.menu-item', menu).forEach(i => i.setAttribute('aria-checked', String(i.dataset.aspect === settings.aspect)));
     menu.hidden = false;
-    const r = btn.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
+    // On big screens the menu is zoomed (N17): measure it on screen, then write left/top in its own px.
+    const zoom = parseFloat(getComputedStyle(menu).zoom) || 1;
+    const r = btn.getBoundingClientRect(), { width: mw, height: mh } = menu.getBoundingClientRect();
     const left = Math.min(window.innerWidth - mw - 8, Math.max(8, r.left + r.width / 2 - mw / 2));
     let top = r.bottom + 6;
     if (top + mh > window.innerHeight - 8) top = Math.max(8, r.top - mh - 6);
-    menu.style.left = `${left}px`;
-    menu.style.top = `${top}px`;
+    menu.style.left = `${left / zoom}px`;
+    menu.style.top = `${top / zoom}px`;
     btn.setAttribute('aria-expanded', 'true');
   });
   document.addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) hideMenu(); });
