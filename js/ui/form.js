@@ -1,7 +1,7 @@
 /* ========== Bouncical — ui/form.js ========== */
 /* Form controls used by every panel and by the rule builder. */
 
-import { h } from './dom.js';
+import { h, toast } from './dom.js';
 import { PALETTE, hsl } from '../util.js';
 
 let uid = 0;
@@ -28,11 +28,18 @@ export function slider({ label, min, max, step = 1, value, format = v => v, onIn
   return el;
 }
 
-export function toggle({ label, value, onChange }) {
+const LOCK_ICON = '<svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="5.5" width="7" height="5" rx="1"/><path d="M4 5.5V4a2 2 0 0 1 4 0v1.5"/></svg>';
+
+// locked: why the feature can't be changed yet. The switch keeps its value, with a padlock next
+// to the label; a tap, a click or Space tells why (aria-disabled, so it still gets the events).
+export function toggle({ label, value, onChange, locked }) {
   const id = nid();
-  const input = h('input.switch', { type: 'checkbox', id, checked: !!value, role: 'switch' });
+  const input = h('input.switch', { type: 'checkbox', id, checked: !!value, role: 'switch', 'aria-disabled': locked ? 'true' : null });
   input.addEventListener('change', () => onChange(input.checked));
-  const el = h('label.frow.ftoggle', { for: id }, h('span.flabel', { text: label }), input);
+  const name = h('span.flabel', { text: label });
+  if (locked) name.append(h('span.flock', { role: 'img', 'aria-label': 'Locked', html: LOCK_ICON }));
+  const refuse = e => { e.preventDefault(); toast(locked); };
+  const el = h('label.frow.ftoggle', { for: id, title: locked, onclick: locked ? refuse : null }, name, input);
   el.setValue = v => { input.checked = !!v; };
   return el;
 }

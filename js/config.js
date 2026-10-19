@@ -17,6 +17,10 @@ export const ASPECTS = {
   fit: { w: 0, h: 0, label: 'Fit', hint: 'Fill this screen' },
 };
 
+// ─── LOCKED FEATURES ───
+// Removing the logo watermark has to be unlocked: until then it stays on, whatever was saved.
+export const WATERMARK_LOCKED = true;
+
 // ─── DEFAULTS ───
 export const DEFAULTS = {
   world: {

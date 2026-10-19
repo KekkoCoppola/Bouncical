@@ -423,6 +423,20 @@
   transform: translateX(12px);
 }
 
+/* Locked switch (asked by the user, 2026-10-19): a feature still to unlock keeps its value,
+   with a padlock next to the label */
+.flock {
+  display: inline-flex;
+  margin-left: var(--s-1);
+  vertical-align: -1px;
+  color: var(--ink-500);
+}
+
+.ftoggle:has(.switch[aria-disabled="true"]),
+.switch[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 /* Select, num, text inputs */
 .fselect {
   height: var(--control-h);
