@@ -37,7 +37,7 @@
       </button>
       <button class="ss-icon-btn ss-icon-btn--bare" id="btn-mute" type="button" aria-pressed="false" title="Audio" data-en-title="Sound" aria-label="Audio" data-en-aria-label="Sound">
         <svg class="ss-icon i-sound" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5a2 2 0 0 1 0 3M10 3a4 4 0 0 1 0 6"/></svg>
-        <svg class="ss-icon i-muted" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5l2.5 2.5M11 4.5l-2.5 2.5"/></svg>
+        <svg class="ss-icon i-muted" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5l2.5 2.5M11 4.5l-2.5 2.5"/></svg>
       </button>
     </nav>
     <div class="ss-lang" role="group" aria-label="Lingua" data-en-aria-label="Language">
@@ -161,7 +161,7 @@
       <div class="ss-stage-bar" id="controls" aria-label="Controlli riproduzione" data-en-aria-label="Playback controls">
         <button class="ss-btn ss-btn--sm play" id="btn-play" type="button" aria-pressed="false" title="Riproduci (Spazio)" data-en-title="Play (Space)">
           <svg class="ss-icon i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
-          <svg class="ss-icon i-pause" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M3 2h2v8H3zM7 2h2v8H7z" class="fill"/></svg>
+          <svg class="ss-icon i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2h2v8H3zM7 2h2v8H7z" class="fill"/></svg>
           <span id="lbl-play" data-en="Play">Riproduci</span>
         </button>
       </div>
@@ -275,6 +275,16 @@
   <script src="vendor/polybool.min.js"></script>
   <script src="vendor/tone.min.js"></script>
   <script src="vendor/midi.min.js"></script>
+  <script>
+    // The editor's modules read Matter, PolyBool and decomp as they load: without them nothing
+    // starts, so say it here, where the scene would be (a module would never get this far).
+    if (!window.Matter || !window.PolyBool || !window.decomp) {
+      const hint = document.getElementById('stage-hint');
+      hint.removeAttribute('data-en');
+      hint.textContent = 'Some files failed to load. Please reload the page.';
+      hint.hidden = false;
+    }
+  </script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>

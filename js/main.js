@@ -61,12 +61,5 @@ function wakeAudioOnFirstGesture() {
   events.forEach(t => window.addEventListener(t, wake, true));
 }
 
-if (!window.Matter || !window.PolyBool || !window.decomp) {
-  // Nothing works without the physics libraries: say so where the scene would be.
-  const hint = document.getElementById('stage-hint');
-  hint.removeAttribute('data-en');
-  hint.textContent = 'Some files failed to load. Please reload the page.';
-  hint.hidden = false;
-} else {
-  boot();
-}
+// A missing library is reported by index.html, before the modules load.
+if (window.Matter && window.PolyBool && window.decomp) boot();
