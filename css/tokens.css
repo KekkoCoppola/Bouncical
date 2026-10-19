@@ -154,6 +154,20 @@
    ========================================================================== */
 
 :root {
-  --panel-w: 340px; /* widest settings sheet: the max column of .ss-editor's panel */
-  --stage-w: 560px; /* widest stage column on wide screens */
+  --panel-w: 340px; /* one settings sheet: a column of .ss-editor in family.css (times --k) */
+  --k: 1;           /* N17 control scale: the kit's px are drawn for a 1440×900 window */
 }
+
+/* N17 (asked by the user, 2026-10-19) On big landscape screens the preview grows with the window,
+   so the controls grow with it: --k = min(width / 1440, height / 900), rounded down to an eighth,
+   from 1 to 2.25 (the hub does the same with its "u"). Phones and tablets keep the kit's px */
+@media (orientation: landscape) and (min-width: 1620px) and (min-height: 1013px) { :root { --k: 1.125; } }
+@media (orientation: landscape) and (min-width: 1800px) and (min-height: 1125px) { :root { --k: 1.25; } }
+@media (orientation: landscape) and (min-width: 1980px) and (min-height: 1238px) { :root { --k: 1.375; } }
+@media (orientation: landscape) and (min-width: 2160px) and (min-height: 1350px) { :root { --k: 1.5; } }
+@media (orientation: landscape) and (min-width: 2340px) and (min-height: 1463px) { :root { --k: 1.625; } }
+@media (orientation: landscape) and (min-width: 2520px) and (min-height: 1575px) { :root { --k: 1.75; } }
+@media (orientation: landscape) and (min-width: 2700px) and (min-height: 1688px) { :root { --k: 1.875; } }
+@media (orientation: landscape) and (min-width: 2880px) and (min-height: 1800px) { :root { --k: 2; } }
+@media (orientation: landscape) and (min-width: 3060px) and (min-height: 1913px) { :root { --k: 2.125; } }
+@media (orientation: landscape) and (min-width: 3240px) and (min-height: 2025px) { :root { --k: 2.25; } }

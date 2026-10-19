@@ -37,26 +37,33 @@ I valori cromatici sono definiti unicamente in `css/tokens.css` e commutano auto
 
 ## 3. Struttura e Layout
 
-Il layout editor (`.ss-editor`) si adatta fluidamente alla risoluzione dello schermo:
+L'editor (`.ss-editor` = `.ss-head` + `.ss-panel.ss-editor__make` + `.ss-stage` + `.ss-panel.ss-editor__finish`, regola **N17** in coda a `css/family.css`) mette l'anteprima al centro su ogni formato: l'anteprima è quello che si guarda, quindi prende l'altezza della finestra e i comandi le stanno accanto, alla sua scala. L'ordine nel DOM segue l'ordine visivo su desktop (il Tab va da sinistra a destra).
 
-### Desktop (≥ 861px)
-- **Topbar (`.ss-topbar`)**: Wordmark ScrollStudio con link hub, separatore a 16°, avatar con logo Bouncical, controlli rapidi (undo/redo/mute), switch lingua IT/EN e switch tema.
-- **Titolo (`.ss-head`)**: Titolo centrato `Musica dalla fisica` in peso 300 con sottotitolo bilanciato.
-- **Due colonne centrate (`.ss-editor`, regola N16)**:
-  - Layout centrato sull'asse del titolo (`justify-content: center`): pannello e quadro formano un blocco compatto senza vuoti vuoti intermedi.
-  - A sinistra: pannello impostazioni `.ss-panel` (`--panel-w: 340px`) a fisarmonica (`details.ss-section`).
-  - A destra: quadro sticky `.ss-stage` con `.ss-frame` a tutta altezza (`height: var(--stage-frame-h)`, che occupa il massimo possibile dell'altezza della viewport mantenendo l'aspect ratio 9:16/1:1/16:9), canvas Matter.js scalato in alta risoluzione e barra playback `.ss-stage-bar` subito sotto.
-  - Bottoni secondari in inchiostro (`--ink-900` con testo `--on-ink`), riservando l'unico accento corallo all'azione di registrazione video.
+| Formato | Disposizione |
+|---|---|
+| Telefono (< 700px) | titolo, poi l'anteprima che riempie il resto della prima schermata (barra Play compresa), poi i due fogli |
+| ≥ 700px e tablet verticali | come sopra, con i due fogli affiancati sotto lo stage |
+| Orizzontale ≥ 861px | titolo + foglio "make" \| stage (2 colonne) |
+| Orizzontale ≥ 1200px | titolo + foglio "make" \| stage \| foglio "finish" (3 colonne, gruppo centrato) |
+
+- **Topbar (`.ss-topbar`)**: Wordmark ScrollStudio con link hub, separatore a 16°, avatar con logo Bouncical, controlli rapidi (undo/redo/mute), switch lingua IT/EN e switch tema. Sotto 640px va a capo su due righe mantenendo fruibili tutti i comandi.
+- **Titolo (`.ss-head`)**: primo figlio di `.ss-editor`. Centrato su telefono e tablet; da 861px in orizzontale è allineato a sinistra in cima alla colonna "make", senza padding, così lo stage parte subito sotto la topbar.
+- **Foglio "make" (`.ss-editor__make`, "Scena e strumenti")**: cosa costruisci sulla scena — Strumenti · Forma selezionata (compare quando tocchi una forma) · Scena e formato.
+- **Stage (`.ss-stage`)**: quadro `.ss-frame` largo `(100svh − --stage-chrome) × --frame-ratio`. La forma segue il formato della scena (9:16, 1:1, 16:9): `js/stage.js` scrive `--frame-ratio` (larghezza/altezza) e `data-aspect` su `.ss-editor`; con *Fit* il quadro riempie tutta la colonna dello stage e l'altezza rimasta. Con un formato orizzontale la colonna (`minmax(0, …)`) si stringe e l'altezza segue l'aspect-ratio. Sotto il quadro la barra `.ss-stage-bar` (Play), larga quanto il quadro. Da 861px in orizzontale lo stage è `sticky`: i fogli scorrono, l'anteprima resta lì. Il canvas segue il quadro (ResizeObserver su `#stage-wrap`, `devicePixelRatio` fino a `stage.maxDpr`).
+- **Foglio "finish" (`.ss-editor__finish`, "Impostazioni")**: scene pronte, come si comporta, come suona, cosa esce — Scene virali · Regole · Mondo (Fisica) · Musica · Effetti (FX) · Registra ed esporta (sempre l'ultima).
+- **`--stage-chrome`**: tutto quello che divide l'altezza della finestra con il quadro (topbar, titolo su telefono e tablet, gap, barra Play e 16px di margine sotto). Misurato: 255px su telefono (topbar su due righe), 234px da 700px, `132px × --k` in orizzontale da 861px.
+- **Scala `--k`** (`css/tokens.css`): `min(larghezza/1440, altezza/900)` arrotondato all'ottavo, da 1 a 2.25, solo in orizzontale; telefoni e tablet restano a 1. Con `zoom: var(--k)` crescono topbar, titolo, fogli, barra Play, suggerimento sul quadro, modali, menu formato, toast, riquadro di rilascio file e footer; le colonne dei fogli sono `--panel-w × --k`. Lo stage, il quadro e il canvas non si zoomano (lo zoom scala anche `vw`/`svh`): il quadro è calcolato su `100svh`. È lo stesso principio della "u" dell'hub.
 - **Footer (`.ss-footer`)**: Wordmark ScrollStudio e copyright 2026.
-
-### Mobile (≤ 860px)
-- Lo stage `.ss-stage` si sposta in alto (`order: -1`) per dare immediata visibilità visiva e interattiva alla simulazione.
-- Il pannello comandi `.ss-panel` segue sotto a tutta larghezza, scorrevole naturalmente con la pagina.
-- La topbar va a capo su due righe mantenendo fruibili tutti i comandi.
 
 ---
 
 ## 4. Componenti e Ricette
+
+### Aggiunte alla famiglia (in coda a `css/family.css` e `css/tokens.css`)
+
+| # | Componente | Ruolo | Affine a | Dove |
+|---|---|---|---|---|
+| N17 | `.ss-editor` con l'anteprima al centro (`--k`, `--stage-chrome`, `--frame-ratio`, `.ss-editor__make` / `__finish`) — sostituisce N16 | l'anteprima prende l'altezza della finestra e la forma del formato della scena; i comandi le stanno accanto e su schermi orizzontali grandi crescono con `zoom: var(--k)` | `.ss-editor` | Editor, tutti i formati |
 
 ### Strumenti di disegno (`.ss-tool-grid`, `.ss-tool-btn`)
 - Griglia 4×2 posizionata nella prima sezione del pannello.

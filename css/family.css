@@ -1294,26 +1294,146 @@ h3 {
    Aligns layout, contrast and proportions with TopFratmRanks and ScrollStudio.
    ========================================================================== */
 
-/* N16 Wide screens: the kit's stage column takes all the wall left of the panel, so on a large
-   screen the preview floats far from its controls and off the title's axis. Here the
-   stage column stops at the content's width and panel + stage stay one group, centred under
-   the title. The page stays as wide as before: the light behind the stage is not cut */
-@media (min-width: 861px) {
-  .ss-head {
-    padding: var(--s-2) var(--gutter) var(--s-3);
-  }
+/* N17 Preview-first editor (asked by the user, 2026-10-19; replaces N16, same recipe as
+   TopFratmRanks). The preview is what you look at, so it takes the window's height and the rest
+   sits next to it, at its scale:
+   - phone: title, the preview filling the rest of the first screen, then the two sheets
+   - from 700px (and portrait tablets): the same, with the two sheets side by side
+   - landscape from 861px: title + sheet "make" (tools, selected shape, scene & format) | stage
+   - landscape from 1200px: title + sheet "make" | stage | sheet "finish" (viral scenes, rules,
+     world, music, effects, record)
+   On landscape screens every control is zoomed by --k (tokens.css). The stage is not: its frame
+   is sized on 100svh, and zoom scales viewport units too. --stage-chrome is what shares the
+   window's height with the frame: topbar, title, gaps, the bar under the frame and a margin.
+   The scene's format changes, so the frame's shape is --frame-ratio (width / height), set with
+   data-aspect on .ss-editor by js/stage.js; "Fit" fills the space the layout gives the stage */
 
+.ss-editor {
+  --frame-ratio: 0.5625; /* 9:16 until js/stage.js sets the scene's format */
+  --stage-chrome: 255px; /* measured: frame top 199 + gap 12 + bar 28 + 16 */
+  --frame-h: calc(100svh - var(--stage-chrome));
+  --frame-w: min(100%, calc(var(--frame-h) * var(--frame-ratio)));
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "head" "stage" "make" "finish";
+  gap: var(--s-5);
+}
+
+.ss-editor > .ss-head {
+  grid-area: head;
+  padding: var(--s-2) 0 0;
+}
+
+.ss-editor > .ss-stage {
+  grid-area: stage;
+  position: relative;
+  top: auto;
+  gap: calc(var(--s-2) * var(--k));
+}
+
+.ss-editor__make {
+  grid-area: make;
+}
+
+.ss-editor__finish {
+  grid-area: finish;
+}
+
+/* The light behind the stage stays behind the sheets next to it */
+.ss-editor > .ss-panel {
+  position: relative;
+  z-index: 1;
+}
+
+/* The frame takes the scene's format; the bar under it is as wide as the frame */
+.ss-editor .ss-frame,
+.ss-editor .ss-stage-bar {
+  width: var(--frame-w);
+}
+
+.ss-editor .ss-frame {
+  aspect-ratio: var(--frame-ratio);
+}
+
+/* Fit: all the stage's width, all the height left */
+.ss-editor[data-aspect="fit"] {
+  --frame-w: 100%;
+}
+
+.ss-editor[data-aspect="fit"] .ss-frame {
+  aspect-ratio: auto;
+  height: var(--frame-h);
+}
+
+@media (min-width: 700px) {
   .ss-editor {
-    grid-template-columns: minmax(280px, var(--panel-w)) auto;
+    --stage-chrome: 234px; /* one-row topbar: frame top 178 + gap 12 + bar 28 + 16 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "head head" "stage stage" "make finish";
+  }
+}
+
+@media (orientation: landscape) and (min-width: 861px) {
+  .ss-editor {
+    --stage-chrome: calc(132px * var(--k)); /* (frame top 76 + gap 12 + bar 28 + 16) × k */
+    --frame-w: 100%; /* the stage column is already the frame's width */
+    --stage-track: minmax(0, calc(var(--frame-h) * var(--frame-ratio)));
+    grid-template-columns: calc(var(--panel-w) * var(--k)) var(--stage-track);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: "head stage" "make stage" "finish stage" ". stage";
     justify-content: center;
-    gap: var(--s-5);
-    padding: 0 var(--gutter) var(--s-3);
+    gap: calc(var(--s-5) * var(--k)) calc(var(--s-6) * var(--k));
+    padding-top: calc(var(--s-2) * var(--k));
+    padding-bottom: calc(var(--s-7) * var(--k));
   }
 
-  .ss-stage {
+  .ss-editor[data-aspect="fit"] {
+    --stage-track: minmax(0, 1fr);
+  }
+
+  .ss-editor > .ss-head {
+    align-items: flex-start;
+    padding: 0;
+    text-align: left;
+  }
+
+  .ss-editor > .ss-stage {
     position: sticky;
-    top: var(--s-2);
-    gap: var(--s-2);
+    top: calc(var(--s-3) * var(--k));
+  }
+
+  .ss-topbar,
+  .ss-head,
+  .ss-panel,
+  .ss-stage-bar,
+  .stage-hint,
+  .ss-modal,
+  .ss-menu,
+  .ss-toast,
+  .ss-drop,
+  .ss-footer {
+    zoom: var(--k);
+  }
+
+  /* Inside a zoomed box viewport units are zoomed too: divided back, edges stay aligned */
+  .ss-topbar,
+  .ss-head,
+  .ss-footer {
+    padding-inline: calc(var(--gutter) / var(--k));
+  }
+
+  .rec-preview {
+    max-height: calc(55vh / var(--k));
+  }
+}
+
+@media (orientation: landscape) and (min-width: 1200px) {
+  .ss-editor {
+    grid-template-columns:
+      calc(var(--panel-w) * var(--k))
+      var(--stage-track)
+      calc(var(--panel-w) * var(--k));
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas: "head stage finish" "make stage finish" ". stage finish";
   }
 }
 

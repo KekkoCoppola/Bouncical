@@ -37,7 +37,7 @@
       </button>
       <button class="ss-icon-btn ss-icon-btn--bare" id="btn-mute" type="button" aria-pressed="false" title="Audio" data-en-title="Sound" aria-label="Audio" data-en-aria-label="Sound">
         <svg class="ss-icon i-sound" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5a2 2 0 0 1 0 3M10 3a4 4 0 0 1 0 6"/></svg>
-        <svg class="ss-icon i-muted" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5l2.5 2.5M11 4.5l-2.5 2.5"/></svg>
+        <svg class="ss-icon i-muted" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5v3h2l3 2.5V2L4 4.5H2z"/><path d="M8.5 4.5l2.5 2.5M11 4.5l-2.5 2.5"/></svg>
       </button>
     </nav>
     <div class="ss-lang" role="group" aria-label="Lingua" data-en-aria-label="Language">
@@ -60,15 +60,17 @@
     </div>
   </header>
 
-  <!-- Titolo della pagina (stesse parole dell'hub) -->
-  <div class="ss-head">
-    <h1 class="ss-head__title" data-en="Physics music sandbox">Musica dalla fisica</h1>
-    <p class="ss-head__lede" data-en="Make those viral videos of balls bouncing to the beat, ready for TikTok and Instagram.">Crea i video virali delle palline che rimbalzano a tempo di musica, pronti per TikTok e Instagram.</p>
-  </div>
-
-  <!-- Layout editor: pannello impostazioni a sinistra + anteprima appesa alla parete a destra -->
+  <!-- Layout editor (N17): titolo, foglio "make", anteprima al centro, foglio "finish".
+       L'anteprima prende l'altezza della finestra; i fogli le stanno accanto (o sotto, su telefono) -->
   <main class="ss-editor">
-    <aside class="ss-panel" aria-label="Impostazioni" data-en-aria-label="Settings">
+    <!-- Titolo della pagina (stesse parole dell'hub) -->
+    <div class="ss-head">
+      <h1 class="ss-head__title" data-en="Physics music sandbox">Musica dalla fisica</h1>
+      <p class="ss-head__lede" data-en="Make those viral videos of balls bouncing to the beat, ready for TikTok and Instagram.">Crea i video virali delle palline che rimbalzano a tempo di musica, pronti per TikTok e Instagram.</p>
+    </div>
+
+    <!-- Foglio "make": cosa costruisci sulla scena -->
+    <aside class="ss-panel ss-editor__make" aria-label="Scena e strumenti" data-en-aria-label="Scene and tools">
 
       <!-- SEZIONE 1: Strumenti di disegno (Opzione A) -->
       <details class="ss-section" id="sec-tools" open>
@@ -106,6 +108,15 @@
         </div>
       </details>
 
+      <!-- SEZIONE 8: Ispettore Forma selezionata -->
+      <details class="ss-section panel" id="panel-shape" style="display:none">
+        <summary>
+          <span class="panel-title" data-en="Selected Shape">Forma selezionata</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
       <!-- SEZIONE 2: Scena & Formato -->
       <details class="ss-section" id="sec-scene" open>
         <summary>
@@ -135,6 +146,39 @@
         </div>
       </details>
 
+    </aside>
+
+    <!-- Stage: Quadro appeso alla parete con luce chiara dietro -->
+    <section class="ss-stage" aria-label="Anteprima" data-en-aria-label="Preview">
+      <div class="ss-frame" id="stage-frame">
+        <div id="stage-wrap">
+          <canvas id="stage" aria-label="Physics scene"></canvas>
+          <div id="stage-hint" class="stage-hint" hidden data-en="Tap to drop a ball · draw shapes · press ▶">Tocca per far cadere una pallina · disegna forme · premi ▶</div>
+        </div>
+      </div>
+
+      <!-- Barra di controllo sotto il quadro -->
+      <div class="ss-stage-bar" id="controls" aria-label="Controlli riproduzione" data-en-aria-label="Playback controls">
+        <button class="ss-btn ss-btn--sm play" id="btn-play" type="button" aria-pressed="false" title="Riproduci (Spazio)" data-en-title="Play (Space)">
+          <svg class="ss-icon i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
+          <svg class="ss-icon i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2h2v8H3zM7 2h2v8H7z" class="fill"/></svg>
+          <span id="lbl-play" data-en="Play">Riproduci</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Foglio "finish": scene pronte, come si comporta, come suona, cosa esce -->
+    <aside class="ss-panel ss-editor__finish" aria-label="Impostazioni" data-en-aria-label="Settings">
+
+      <!-- SEZIONE 7: Scene virali (Templates) -->
+      <details class="ss-section panel" id="panel-scenes">
+        <summary>
+          <span data-en="Viral Scenes">Scene virali</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
       <!-- SEZIONE 3: Regole (Rules) -->
       <details class="ss-section panel" id="panel-rules">
         <summary>
@@ -142,15 +186,6 @@
           <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
         </summary>
         <div class="ss-section__body panel-body" id="rules-body"></div>
-      </details>
-
-      <!-- SEZIONE 4: Musica (Music) -->
-      <details class="ss-section panel" id="panel-music">
-        <summary>
-          <span data-en="Music">Musica</span>
-          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
-        </summary>
-        <div class="ss-section__body panel-body"></div>
       </details>
 
       <!-- SEZIONE 5: Mondo (World Physics) -->
@@ -162,28 +197,19 @@
         <div class="ss-section__body panel-body"></div>
       </details>
 
+      <!-- SEZIONE 4: Musica (Music) -->
+      <details class="ss-section panel" id="panel-music">
+        <summary>
+          <span data-en="Music">Musica</span>
+          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </summary>
+        <div class="ss-section__body panel-body"></div>
+      </details>
+
       <!-- SEZIONE 6: Effetti (FX) -->
       <details class="ss-section panel" id="panel-fx">
         <summary>
           <span data-en="Effects (FX)">Effetti (FX)</span>
-          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
-        </summary>
-        <div class="ss-section__body panel-body"></div>
-      </details>
-
-      <!-- SEZIONE 7: Scene virali (Templates) -->
-      <details class="ss-section panel" id="panel-scenes">
-        <summary>
-          <span data-en="Viral Scenes">Scene virali</span>
-          <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
-        </summary>
-        <div class="ss-section__body panel-body"></div>
-      </details>
-
-      <!-- SEZIONE 8: Ispettore Forma selezionata -->
-      <details class="ss-section panel" id="panel-shape" style="display:none">
-        <summary>
-          <span class="panel-title" data-en="Selected Shape">Forma selezionata</span>
           <svg class="ss-icon ss-section__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
         </summary>
         <div class="ss-section__body panel-body"></div>
@@ -206,25 +232,6 @@
       </details>
 
     </aside>
-
-    <!-- Stage: Quadro appeso alla parete con luce chiara dietro -->
-    <section class="ss-stage" aria-label="Anteprima" data-en-aria-label="Preview">
-      <div class="ss-frame" id="stage-frame">
-        <div id="stage-wrap">
-          <canvas id="stage" aria-label="Physics scene"></canvas>
-          <div id="stage-hint" class="stage-hint" hidden data-en="Tap to drop a ball · draw shapes · press ▶">Tocca per far cadere una pallina · disegna forme · premi ▶</div>
-        </div>
-      </div>
-
-      <!-- Barra di controllo sotto il quadro -->
-      <div class="ss-stage-bar" id="controls" aria-label="Controlli riproduzione" data-en-aria-label="Playback controls">
-        <button class="ss-btn ss-btn--sm play" id="btn-play" type="button" aria-pressed="false" title="Riproduci (Spazio)" data-en-title="Play (Space)">
-          <svg class="ss-icon i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
-          <svg class="ss-icon i-pause" viewBox="0 0 12 12" aria-hidden="true" style="display:none"><path d="M3 2h2v8H3zM7 2h2v8H7z" class="fill"/></svg>
-          <span id="lbl-play" data-en="Play">Riproduci</span>
-        </button>
-      </div>
-    </section>
   </main>
 
   <!-- Footer con wordmark ScrollStudio e copyright -->
@@ -263,29 +270,21 @@
 
   <input type="file" id="song-input" hidden accept=".mid,.midi,.kar,.smf,audio/midi,audio/mid,audio/x-midi,application/x-midi,.mp3,.m4a,.aac,.wav,.ogg,.oga,.opus,.flac,audio/*">
 
-  <!-- Splash: sblocco audio con il primo tocco -->
-  <div id="splash" class="ss-overlay splash">
-    <div class="ss-modal splash-inner" role="dialog" aria-labelledby="splash-title">
-      <div class="splash-brand">
-        <img src="assets/bouncical-logo.svg" alt="Bouncical" class="splash-logo" width="48" height="48">
-        <h2 id="splash-title" class="splash-title">Bouncical</h2>
-      </div>
-      <p class="splash-sub" id="splash-sub" data-en="Draw shapes, drop balls, write rules — and let gravity compose the music.">Disegna forme, lancia palline, scrivi regole — e lascia che la gravità componga la musica.</p>
-      <button class="ss-btn ss-btn--primary ss-btn--block" id="splash-start" type="button">
-        <svg class="ss-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" class="fill"/></svg>
-        <span data-en="Start">Inizia</span>
-      </button>
-      <p class="splash-or" data-en="or open a viral scene">oppure apri una scena virale</p>
-      <div class="splash-scenes" id="splash-scenes"></div>
-      <p class="splash-foot" data-en="🔊 Turn the sound on · works offline · no sign-up">🔊 Attiva l'audio · funziona offline · nessuna registrazione</p>
-    </div>
-  </div>
-
   <script src="vendor/matter.min.js"></script>
   <script src="vendor/decomp.min.js"></script>
   <script src="vendor/polybool.min.js"></script>
   <script src="vendor/tone.min.js"></script>
   <script src="vendor/midi.min.js"></script>
+  <script>
+    // The editor's modules read Matter, PolyBool and decomp as they load: without them nothing
+    // starts, so say it here, where the scene would be (a module would never get this far).
+    if (!window.Matter || !window.PolyBool || !window.decomp) {
+      const hint = document.getElementById('stage-hint');
+      hint.removeAttribute('data-en');
+      hint.textContent = 'Some files failed to load. Please reload the page.';
+      hint.hidden = false;
+    }
+  </script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
